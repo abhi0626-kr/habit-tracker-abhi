@@ -5,7 +5,8 @@ import {
   startOfMonth, endOfMonth, eachDayOfInterval, addMonths, format,
   isSameDay, isFuture, isToday, startOfYear,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil, RotateCcw } from "lucide-react";
+
 import { useHabits } from "@/store/habits";
 import { bestStreak, completionRate, currentStreak, dateKey, isCompleted } from "@/lib/habit-utils";
 import { HabitDialog } from "@/components/HabitDialog";
