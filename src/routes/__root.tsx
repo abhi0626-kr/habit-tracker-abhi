@@ -82,6 +82,11 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+function AppShell() {
+  const hydrated = useHydrateStore();
+  if (!hydrated) {
+    return <div className="grid place-items-center min-h-screen text-sm text-muted-foreground">Loading…</div>;
+  }
   return <AppShellInner />;
 }
 
@@ -97,9 +102,3 @@ function AppShellInner() {
   );
 }
 
-        <Outlet />
-      </main>
-    </div>
-
-  );
-}
