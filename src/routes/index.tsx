@@ -5,7 +5,8 @@ import {
   startOfMonth, endOfMonth, eachDayOfInterval, addMonths, format,
   isSameDay, isFuture, isToday, startOfYear,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil, RotateCcw } from "lucide-react";
+
 import { useHabits } from "@/store/habits";
 import { bestStreak, completionRate, currentStreak, dateKey, isCompleted } from "@/lib/habit-utils";
 import { HabitDialog } from "@/components/HabitDialog";
@@ -26,6 +27,8 @@ function DashboardPage() {
   const habits = useHabits((s) => s.habits);
   const completions = useHabits((s) => s.completions);
   const toggle = useHabits((s) => s.toggleCompletion);
+  const resetMonth = useHabits((s) => s.resetMonth);
+
   const [cursor, setCursor] = useState(new Date());
   const [editing, setEditing] = useState<Habit | undefined>();
 
@@ -71,12 +74,26 @@ function DashboardPage() {
             {format(new Date(), "EEEE, MMMM d")}
           </h1>
         </div>
-        <div className="flex items-center gap-1 glass rounded-xl p-1">
-          <button onClick={() => setCursor((d) => addMonths(d, -1))} className="p-2 rounded-lg hover:bg-white/5"><ChevronLeft className="h-4 w-4" /></button>
-          <button onClick={() => setCursor(new Date())} className="px-3 py-1.5 text-xs font-medium rounded-lg hover:bg-white/5">Today</button>
-          <div className="px-3 py-1.5 text-sm font-medium min-w-[120px] text-center">{format(cursor, "MMMM yyyy")}</div>
-          <button onClick={() => setCursor((d) => addMonths(d, 1))} className="p-2 rounded-lg hover:bg-white/5"><ChevronRight className="h-4 w-4" /></button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              if (confirm(`Reset all check-ins for ${format(cursor, "MMMM yyyy")}?`)) {
+                resetMonth(cursor.getFullYear(), cursor.getMonth());
+              }
+            }}
+            className="glass rounded-xl px-3 py-2 text-xs font-medium flex items-center gap-1.5 hover:border-destructive/40 hover:text-destructive transition"
+            title="Reset this month's check-ins"
+          >
+            <RotateCcw className="h-3.5 w-3.5" /> Reset month
+          </button>
+          <div className="flex items-center gap-1 glass rounded-xl p-1">
+            <button onClick={() => setCursor((d) => addMonths(d, -1))} className="p-2 rounded-lg hover:bg-white/5"><ChevronLeft className="h-4 w-4" /></button>
+            <button onClick={() => setCursor(new Date())} className="px-3 py-1.5 text-xs font-medium rounded-lg hover:bg-white/5">Today</button>
+            <div className="px-3 py-1.5 text-sm font-medium min-w-[120px] text-center">{format(cursor, "MMMM yyyy")}</div>
+            <button onClick={() => setCursor((d) => addMonths(d, 1))} className="p-2 rounded-lg hover:bg-white/5"><ChevronRight className="h-4 w-4" /></button>
+          </div>
         </div>
+
       </header>
 
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">

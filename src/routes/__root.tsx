@@ -6,6 +6,8 @@ import {
 import appCss from "../styles.css?url";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useHydrateStore } from "@/hooks/use-hydrate-store";
+import { useReminderScheduler } from "@/hooks/use-reminder-scheduler";
+
 
 function NotFoundComponent() {
   return (
@@ -48,7 +50,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "Track habits, streaks and progress — fully offline." },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "icon", href: "/icon-192.png", type: "image/png" },
+    ],
+
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -76,12 +84,16 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-
 function AppShell() {
   const hydrated = useHydrateStore();
   if (!hydrated) {
     return <div className="grid place-items-center min-h-screen text-sm text-muted-foreground">Loading…</div>;
   }
+  return <AppShellInner />;
+}
+
+function AppShellInner() {
+  useReminderScheduler();
   return (
     <div className="flex min-h-screen w-full">
       <AppSidebar />
@@ -89,6 +101,6 @@ function AppShell() {
         <Outlet />
       </main>
     </div>
-
   );
 }
+
