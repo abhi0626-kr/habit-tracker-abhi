@@ -6,6 +6,8 @@ import {
 import appCss from "../styles.css?url";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useHydrateStore } from "@/hooks/use-hydrate-store";
+import { useReminderScheduler } from "@/hooks/use-reminder-scheduler";
+
 
 function NotFoundComponent() {
   return (
