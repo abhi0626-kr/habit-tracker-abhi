@@ -162,13 +162,32 @@ export function AppSidebar() {
               )} />
             </button>
           </div>
-          <input
-            type="time"
-            value={settings.reminderTime}
-            onChange={(e) => updateSettings({ reminderTime: e.target.value })}
-            className="w-full bg-background/60 rounded-md px-2 py-1 text-xs border border-border outline-none focus:border-gold/50"
-          />
+          <div className="flex items-center gap-1.5">
+            <input
+              type="time"
+              value={settings.reminderTime}
+              onChange={(e) => updateSettings({ reminderTime: e.target.value })}
+              className="flex-1 bg-background/60 rounded-md px-2 py-1 text-xs border border-border outline-none focus:border-gold/50"
+            />
+            <button
+              onClick={async () => {
+                if (!("Notification" in window)) return alert("Notifications not supported");
+                let perm = Notification.permission;
+                if (perm === "default") perm = await Notification.requestPermission();
+                if (perm !== "granted") return alert("Notifications denied. Enable them in your browser settings.");
+                new Notification("Habitus", { body: "Reminders are working ✨", icon: "/icon-192.png" });
+              }}
+              className="text-[10px] px-2 py-1 rounded-md bg-gold/15 text-gold hover:bg-gold/25 transition"
+              title="Send a test notification"
+            >
+              Test
+            </button>
+          </div>
+          {settings.reminderEnabled && (
+            <p className="text-[10px] text-muted-foreground">Notification will fire at {settings.reminderTime} while the app is open.</p>
+          )}
         </div>
+
 
         <button
           onClick={() => { if (confirm("Delete ALL data? This cannot be undone.")) resetAll(); }}
