@@ -27,6 +27,8 @@ function DashboardPage() {
   const habits = useHabits((s) => s.habits);
   const completions = useHabits((s) => s.completions);
   const toggle = useHabits((s) => s.toggleCompletion);
+  const resetMonth = useHabits((s) => s.resetMonth);
+
   const [cursor, setCursor] = useState(new Date());
   const [editing, setEditing] = useState<Habit | undefined>();
 
