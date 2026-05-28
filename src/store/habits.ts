@@ -86,6 +86,18 @@ export const useHabits = create<HabitState>()(
       reorderHabits: (ids) =>
         set((s) => ({ habits: ids.map((id) => s.habits.find((h) => h.id === id)!).filter(Boolean) })),
       resetAll: () => set({ habits: [], completions: {} }),
+      resetCompletions: () =>
+        set((s) => ({ completions: Object.fromEntries(s.habits.map((h) => [h.id, {}])) })),
+      resetMonth: (year, month) =>
+        set((s) => {
+          const prefix = `${year}-${String(month + 1).padStart(2, "0")}`;
+          const next: typeof s.completions = {};
+          for (const [hid, days] of Object.entries(s.completions)) {
+            next[hid] = Object.fromEntries(Object.entries(days).filter(([k]) => !k.startsWith(prefix)));
+          }
+          return { completions: next };
+        }),
+
       importData: (data) =>
         set({
           habits: data.habits ?? [],
