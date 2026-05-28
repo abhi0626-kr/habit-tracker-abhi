@@ -82,16 +82,21 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+  return <AppShellInner />;
+}
 
-function AppShell() {
-  const hydrated = useHydrateStore();
-  if (!hydrated) {
-    return <div className="grid place-items-center min-h-screen text-sm text-muted-foreground">Loading…</div>;
-  }
+function AppShellInner() {
+  useReminderScheduler();
   return (
     <div className="flex min-h-screen w-full">
       <AppSidebar />
       <main className="flex-1 min-w-0">
+        <Outlet />
+      </main>
+    </div>
+  );
+}
+
         <Outlet />
       </main>
     </div>
