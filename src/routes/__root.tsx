@@ -79,14 +79,16 @@ function RootComponent() {
 
 function AppShell() {
   const hydrated = useHydrateStore();
+  if (!hydrated) {
+    return <div className="grid place-items-center min-h-screen text-sm text-muted-foreground">Loading…</div>;
+  }
   return (
     <div className="flex min-h-screen w-full">
       <AppSidebar />
       <main className="flex-1 min-w-0">
-        {hydrated ? <Outlet /> : (
-          <div className="grid place-items-center min-h-screen text-sm text-muted-foreground">Loading…</div>
-        )}
+        <Outlet />
       </main>
     </div>
+
   );
 }
