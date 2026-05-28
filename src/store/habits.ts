@@ -16,6 +16,9 @@ interface HabitState {
   toggleCompletion: (habitId: string, date: Date) => void;
   reorderHabits: (ids: string[]) => void;
   resetAll: () => void;
+  resetCompletions: () => void;
+  resetMonth: (year: number, month: number) => void;
+
   importData: (data: { habits: Habit[]; completions: CompletionMap; settings?: Settings }) => void;
   updateSettings: (patch: Partial<Settings>) => void;
 }
