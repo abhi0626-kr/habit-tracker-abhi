@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, CalendarDays, Flame, BarChart3, Plus } from "lucide-react";
 import { useState } from "react";
+import logo from "@/assets/habits-logo.jpg";
 import { HabitDialog } from "./HabitDialog";
 import { cn } from "@/lib/utils";
 
