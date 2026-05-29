@@ -69,6 +69,7 @@ export function AppSidebar() {
   };
 
   return (
+    <aside className="hidden md:flex w-72 shrink-0 flex-col gap-4 border-r border-border bg-surface/40 backdrop-blur-xl p-4 h-screen sticky top-0">
       <div className="flex items-center gap-3 px-1 pt-1">
         <img
           src={logo}

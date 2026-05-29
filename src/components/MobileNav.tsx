@@ -18,11 +18,10 @@ export function MobileNav() {
 
   return (
     <>
-      {/* Top bar */}
+      <header className="md:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="flex items-center gap-2.5">
           <img src={logo} alt="Habits" width={32} height={32} className="h-8 w-8 rounded-lg object-cover ring-1 ring-border" />
           <div className="text-sm font-semibold tracking-tight text-sage">Habits</div>
-        </div>
         </div>
         <button
           onClick={() => setOpen(true)}
