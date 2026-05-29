@@ -5,8 +5,10 @@ import {
 } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { AppSidebar } from "@/components/AppSidebar";
+import { MobileNav } from "@/components/MobileNav";
 import { useHydrateStore } from "@/hooks/use-hydrate-store";
 import { useReminderScheduler } from "@/hooks/use-reminder-scheduler";
+import { useRegisterSW } from "@/hooks/use-register-sw";
 
 
 function NotFoundComponent() {
@@ -45,7 +47,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Habitus — Offline Habit Tracker" },
       { name: "description", content: "Build better habits with a beautiful offline-first habit tracker. Track streaks, view heatmaps, and analyze your progress." },
-      { name: "theme-color", content: "#0a0a0a" },
+      { name: "theme-color", content: "#15091f" },
       { property: "og:title", content: "Habitus — Offline Habit Tracker" },
       { property: "og:description", content: "Build better habits with a beautiful offline-first habit tracker. Track streaks, view heatmaps, and analyze your progress." },
       { property: "og:type", content: "website" },
@@ -99,10 +101,12 @@ function AppShell() {
 
 function AppShellInner() {
   useReminderScheduler();
+  useRegisterSW();
   return (
     <div className="flex min-h-screen w-full">
       <AppSidebar />
-      <main className="flex-1 min-w-0">
+      <main className="flex-1 min-w-0 pb-20 md:pb-0">
+        <MobileNav />
         <Outlet />
       </main>
     </div>

@@ -7,6 +7,7 @@ import {
 import { useRef, useState } from "react";
 import { useHabits } from "@/store/habits";
 import { HabitDialog } from "./HabitDialog";
+import { InstallDialog } from "./InstallDialog";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -188,6 +189,8 @@ export function AppSidebar() {
           )}
         </div>
 
+
+        <InstallDialog />
 
         <button
           onClick={() => { if (confirm("Delete ALL data? This cannot be undone.")) resetAll(); }}
