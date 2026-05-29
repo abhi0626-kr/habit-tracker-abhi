@@ -97,17 +97,19 @@ function AppShell() {
     return <div className="grid place-items-center min-h-screen text-sm text-muted-foreground">Loading…</div>;
   }
   return <AppShellInner />;
-}
-
 function AppShellInner() {
   useReminderScheduler();
+  useRegisterSW();
   return (
     <div className="flex min-h-screen w-full">
       <AppSidebar />
-      <main className="flex-1 min-w-0">
+      <main className="flex-1 min-w-0 pb-20 md:pb-0">
+        <MobileNav />
         <Outlet />
       </main>
     </div>
+  );
+}
   );
 }
 
