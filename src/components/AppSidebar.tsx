@@ -2,8 +2,9 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, CalendarDays, Flame, BarChart3,
-  Plus, Download, Upload, Bell, Trash2, Sparkles,
+  Plus, Download, Upload, Bell, Trash2,
 } from "lucide-react";
+import logo from "@/assets/habits-logo.jpg";
 import { useRef, useState } from "react";
 import { useHabits } from "@/store/habits";
 import { HabitDialog } from "./HabitDialog";
@@ -69,13 +70,17 @@ export function AppSidebar() {
 
   return (
     <aside className="hidden md:flex w-72 shrink-0 flex-col gap-4 border-r border-border bg-surface/40 backdrop-blur-xl p-4 h-screen sticky top-0">
-      <div className="flex items-center gap-2 px-2 pt-1">
-        <div className="h-9 w-9 rounded-xl bg-gold/15 text-gold grid place-items-center gold-glow">
-          <Sparkles className="h-4 w-4" />
-        </div>
+      <div className="flex items-center gap-3 px-1 pt-1">
+        <img
+          src={logo}
+          alt="Habits logo"
+          width={44}
+          height={44}
+          className="h-11 w-11 rounded-2xl object-cover ring-1 ring-border shadow-sm"
+        />
         <div>
-          <div className="text-sm font-semibold tracking-tight">Habitus</div>
-          <div className="text-[11px] text-muted-foreground">Offline habit tracker</div>
+          <div className="text-base font-semibold tracking-tight text-sage">Habits</div>
+          <div className="text-[11px] text-muted-foreground">A calmer journey</div>
         </div>
       </div>
 
