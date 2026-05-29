@@ -2,8 +2,9 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, CalendarDays, Flame, BarChart3,
-  Plus, Download, Upload, Bell, Trash2, Sparkles,
+  Plus, Download, Upload, Bell, Trash2,
 } from "lucide-react";
+import logo from "@/assets/habits-logo.jpg";
 import { useRef, useState } from "react";
 import { useHabits } from "@/store/habits";
 import { HabitDialog } from "./HabitDialog";
