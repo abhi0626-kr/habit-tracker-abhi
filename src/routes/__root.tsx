@@ -97,6 +97,8 @@ function AppShell() {
     return <div className="grid place-items-center min-h-screen text-sm text-muted-foreground">Loading…</div>;
   }
   return <AppShellInner />;
+}
+
 function AppShellInner() {
   useReminderScheduler();
   useRegisterSW();
@@ -108,8 +110,6 @@ function AppShellInner() {
         <Outlet />
       </main>
     </div>
-  );
-}
   );
 }
 
