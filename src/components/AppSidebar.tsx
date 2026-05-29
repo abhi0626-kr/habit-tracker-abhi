@@ -82,7 +82,6 @@ export function AppSidebar() {
           <div className="text-[11px] text-muted-foreground">A calmer journey</div>
         </div>
       </div>
-      </div>
 
       <nav className="flex flex-col gap-1">
         {navItems.map((n) => {
