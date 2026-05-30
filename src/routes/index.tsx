@@ -100,18 +100,23 @@ function DashboardPage() {
     <div className="p-6 md:p-8 space-y-6 max-w-[1400px]">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-widest text-muted-foreground">Dashboard</p>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mt-1">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">
+            {greetingFor(new Date())}{userName ? `, ${userName}` : ""}
+          </p>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mt-1 flex items-center gap-2">
             {format(new Date(), "EEEE, MMMM d")}
+            <button
+              onClick={() => { setNameDraft(userName); setNameDialogOpen(true); }}
+              className="text-muted-foreground hover:text-foreground transition"
+              title="Edit your name"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
           </h1>
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => {
-              if (confirm(`Reset all check-ins for ${format(cursor, "MMMM yyyy")}?`)) {
-                resetMonth(cursor.getFullYear(), cursor.getMonth());
-              }
-            }}
+            onClick={() => setResetOpen(true)}
             className="glass rounded-xl px-3 py-2 text-xs font-medium flex items-center gap-1.5 hover:border-destructive/40 hover:text-destructive transition"
             title="Reset this month's check-ins"
           >
