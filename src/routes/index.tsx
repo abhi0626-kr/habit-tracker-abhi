@@ -1,17 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   startOfMonth, endOfMonth, eachDayOfInterval, addMonths, format,
   isSameDay, isFuture, isToday, startOfYear,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil, RotateCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil, RotateCcw, Sparkles } from "lucide-react";
 
 import { useHabits } from "@/store/habits";
 import { bestStreak, completionRate, currentStreak, dateKey, isCompleted } from "@/lib/habit-utils";
 import { HabitDialog } from "@/components/HabitDialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import type { Habit } from "@/types/habit";
 import { cn } from "@/lib/utils";
+
+const NAME_KEY = "habitus.userName";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,6 +42,26 @@ function DashboardPage() {
 
   const [cursor, setCursor] = useState(new Date());
   const [editing, setEditing] = useState<Habit | undefined>();
+  const [resetOpen, setResetOpen] = useState(false);
+
+  const [userName, setUserName] = useState<string>("");
+  const [nameDraft, setNameDraft] = useState("");
+  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const stored = typeof window !== "undefined" ? localStorage.getItem(NAME_KEY) : null;
+    if (stored) setUserName(stored);
+    else setNameDialogOpen(true);
+  }, []);
+
+  const saveName = () => {
+    const trimmed = nameDraft.trim().slice(0, 40);
+    if (!trimmed) return;
+    localStorage.setItem(NAME_KEY, trimmed);
+    setUserName(trimmed);
+    setNameDialogOpen(false);
+    setNameDraft("");
+  };
 
   const monthDays = useMemo(
     () => eachDayOfInterval({ start: startOfMonth(cursor), end: endOfMonth(cursor) }),
@@ -69,18 +100,23 @@ function DashboardPage() {
     <div className="p-6 md:p-8 space-y-6 max-w-[1400px]">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-widest text-muted-foreground">Dashboard</p>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mt-1">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">
+            {greetingFor(new Date())}{userName ? `, ${userName}` : ""}
+          </p>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mt-1 flex items-center gap-2">
             {format(new Date(), "EEEE, MMMM d")}
+            <button
+              onClick={() => { setNameDraft(userName); setNameDialogOpen(true); }}
+              className="text-muted-foreground hover:text-foreground transition"
+              title="Edit your name"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
           </h1>
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => {
-              if (confirm(`Reset all check-ins for ${format(cursor, "MMMM yyyy")}?`)) {
-                resetMonth(cursor.getFullYear(), cursor.getMonth());
-              }
-            }}
+            onClick={() => setResetOpen(true)}
             className="glass rounded-xl px-3 py-2 text-xs font-medium flex items-center gap-1.5 hover:border-destructive/40 hover:text-destructive transition"
             title="Reset this month's check-ins"
           >
@@ -209,8 +245,74 @@ function DashboardPage() {
       <YearProgress />
 
       <HabitDialog open={!!editing} onOpenChange={(o) => !o && setEditing(undefined)} habit={editing} />
+
+      <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <RotateCcw className="h-4 w-4 text-destructive" />
+              Reset {format(cursor, "MMMM yyyy")}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This will clear every check-in for this month across all your habits. This action can't be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => resetMonth(cursor.getFullYear(), cursor.getMonth())}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Reset month
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Dialog
+        open={nameDialogOpen}
+        onOpenChange={(o) => { if (userName || !o) setNameDialogOpen(o); }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-gold" />
+              {userName ? "Update your name" : "Welcome to Habitus"}
+            </DialogTitle>
+            <DialogDescription>
+              {userName ? "Change how you're greeted on your dashboard." : "What should we call you? We'll greet you here every day."}
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => { e.preventDefault(); saveName(); }}
+            className="space-y-3"
+          >
+            <Input
+              autoFocus
+              maxLength={40}
+              placeholder="Your name"
+              value={nameDraft}
+              onChange={(e) => setNameDraft(e.target.value)}
+            />
+            <DialogFooter>
+              <Button type="submit" disabled={!nameDraft.trim()} className="bg-gold text-primary-foreground hover:bg-gold/90">
+                {userName ? "Save" : "Let's go"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
+}
+
+function greetingFor(d: Date): string {
+  const h = d.getHours();
+  if (h < 5) return "Late night";
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  if (h < 21) return "Good evening";
+  return "Good night";
 }
 
 function StatCard({ icon, label, value, suffix, progress }: { icon: React.ReactNode; label: string; value: string; suffix?: string; progress?: number }) {
