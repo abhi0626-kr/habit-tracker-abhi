@@ -1,17 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   startOfMonth, endOfMonth, eachDayOfInterval, addMonths, format,
   isSameDay, isFuture, isToday, startOfYear,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil, RotateCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil, RotateCcw, Sparkles } from "lucide-react";
 
 import { useHabits } from "@/store/habits";
 import { bestStreak, completionRate, currentStreak, dateKey, isCompleted } from "@/lib/habit-utils";
 import { HabitDialog } from "@/components/HabitDialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import type { Habit } from "@/types/habit";
 import { cn } from "@/lib/utils";
+
+const NAME_KEY = "habitus.userName";
 
 export const Route = createFileRoute("/")({
   head: () => ({
