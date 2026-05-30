@@ -63,6 +63,10 @@ function DashboardPage() {
     setNameDraft("");
   };
 
+  const monthDays = useMemo(
+    () => eachDayOfInterval({ start: startOfMonth(cursor), end: endOfMonth(cursor) }),
+    [cursor]
+  );
 
   const stats = useMemo(() => {
     const today = new Date();
