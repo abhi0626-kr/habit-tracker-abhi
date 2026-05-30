@@ -42,11 +42,27 @@ function DashboardPage() {
 
   const [cursor, setCursor] = useState(new Date());
   const [editing, setEditing] = useState<Habit | undefined>();
+  const [resetOpen, setResetOpen] = useState(false);
 
-  const monthDays = useMemo(
-    () => eachDayOfInterval({ start: startOfMonth(cursor), end: endOfMonth(cursor) }),
-    [cursor]
-  );
+  const [userName, setUserName] = useState<string>("");
+  const [nameDraft, setNameDraft] = useState("");
+  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const stored = typeof window !== "undefined" ? localStorage.getItem(NAME_KEY) : null;
+    if (stored) setUserName(stored);
+    else setNameDialogOpen(true);
+  }, []);
+
+  const saveName = () => {
+    const trimmed = nameDraft.trim().slice(0, 40);
+    if (!trimmed) return;
+    localStorage.setItem(NAME_KEY, trimmed);
+    setUserName(trimmed);
+    setNameDialogOpen(false);
+    setNameDraft("");
+  };
+
 
   const stats = useMemo(() => {
     const today = new Date();
