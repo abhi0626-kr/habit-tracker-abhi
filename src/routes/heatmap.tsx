@@ -90,7 +90,7 @@ function HeatmapPage() {
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="glass rounded-lg px-3 py-2 text-sm outline-none border-border bg-transparent"
+          className="glass rounded-lg px-3 py-2 pr-8 text-sm outline-none border-border bg-background text-foreground [&>option]:bg-background [&>option]:text-foreground"
         >
           <option value="all">All habits</option>
           {habits.map((h) => <option key={h.id} value={h.id}>{h.emoji} {h.name}</option>)}
