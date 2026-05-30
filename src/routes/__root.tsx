@@ -47,7 +47,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Habitus — Offline Habit Tracker" },
       { name: "description", content: "Build better habits with a beautiful offline-first habit tracker. Track streaks, view heatmaps, and analyze your progress." },
-      { name: "theme-color", content: "#f4efe4" },
+      { name: "theme-color", content: "#15091f" },
       { property: "og:title", content: "Habitus — Offline Habit Tracker" },
       { property: "og:description", content: "Build better habits with a beautiful offline-first habit tracker. Track streaks, view heatmaps, and analyze your progress." },
       { property: "og:type", content: "website" },
