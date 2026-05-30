@@ -50,54 +50,52 @@
 :root {
   --radius: 0.875rem;
 
-  /* "Habits" calm-journey theme — cream + sage + sunset orange, inspired by the logo */
-  --background: oklch(0.96 0.018 95);   /* warm ivory */
-  --foreground: oklch(0.22 0.03 200);   /* deep ink */
+  /* Deep purple-black + neon magenta theme (from reference screenshot) */
+  --background: oklch(0.14 0.04 300);
+  --foreground: oklch(0.97 0.01 320);
 
-  --surface: oklch(0.93 0.022 100);
-  --surface-elevated: oklch(0.97 0.015 95);
+  --surface: oklch(0.18 0.05 300);
+  --surface-elevated: oklch(0.22 0.06 300);
 
-  --card: oklch(0.98 0.012 95 / 0.85);
-  --card-foreground: oklch(0.22 0.03 200);
-  --popover: oklch(0.98 0.012 95);
-  --popover-foreground: oklch(0.22 0.03 200);
+  --card: oklch(0.20 0.05 300 / 0.7);
+  --card-foreground: oklch(0.97 0.01 320);
+  --popover: oklch(0.18 0.05 300);
+  --popover-foreground: oklch(0.97 0.01 320);
 
-  /* Sunset orange primary */
-  --primary: oklch(0.68 0.18 45);
-  --primary-foreground: oklch(0.99 0.005 90);
+  --primary: oklch(0.72 0.30 330);
+  --primary-foreground: oklch(0.10 0.03 300);
 
-  /* Legacy gold/neon tokens now alias to sunset orange so existing code keeps working */
-  --gold: oklch(0.68 0.18 45);
-  --gold-soft: oklch(0.68 0.18 45 / 0.16);
-  --neon: oklch(0.68 0.18 45);
-  --neon-soft: oklch(0.68 0.18 45 / 0.16);
-  --neon-pink: oklch(0.72 0.16 38);
-  --neon-violet: oklch(0.50 0.07 175);
+  /* Neon magenta tokens (gold tokens alias to neon for legacy code) */
+  --gold: oklch(0.72 0.30 330);
+  --gold-soft: oklch(0.72 0.30 330 / 0.18);
+  --neon: oklch(0.72 0.30 330);
+  --neon-soft: oklch(0.72 0.30 330 / 0.18);
+  --neon-pink: oklch(0.74 0.32 350);
+  --neon-violet: oklch(0.62 0.25 295);
 
-  /* Sage / forest support colors */
-  --sage: oklch(0.66 0.06 155);
-  --sage-deep: oklch(0.40 0.05 165);
-  --forest: oklch(0.30 0.04 175);
+  --sage: oklch(0.74 0.32 350);
+  --sage-deep: oklch(0.97 0.01 320);
+  --forest: oklch(0.30 0.08 300);
 
-  --secondary: oklch(0.88 0.03 150);
-  --secondary-foreground: oklch(0.25 0.04 175);
-  --muted: oklch(0.90 0.02 110);
-  --muted-foreground: oklch(0.45 0.03 180);
-  --accent: oklch(0.85 0.05 155);
-  --accent-foreground: oklch(0.25 0.04 175);
-  --destructive: oklch(0.58 0.20 28);
+  --secondary: oklch(0.26 0.07 300);
+  --secondary-foreground: oklch(0.97 0.01 320);
+  --muted: oklch(0.24 0.05 300);
+  --muted-foreground: oklch(0.70 0.04 310);
+  --accent: oklch(0.30 0.10 320);
+  --accent-foreground: oklch(0.97 0.01 320);
+  --destructive: oklch(0.62 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.30 0.04 175 / 0.12);
-  --input: oklch(0.30 0.04 175 / 0.10);
-  --ring: oklch(0.68 0.18 45 / 0.5);
+  --border: oklch(0.97 0.01 320 / 0.10);
+  --input: oklch(0.97 0.01 320 / 0.08);
+  --ring: oklch(0.72 0.30 330 / 0.5);
 
-  /* Heatmap: pale sage → sunset */
-  --heat-0: oklch(0.90 0.02 150);
-  --heat-1: oklch(0.82 0.07 140);
-  --heat-2: oklch(0.76 0.12 95);
-  --heat-3: oklch(0.72 0.16 65);
-  --heat-4: oklch(0.66 0.20 45);
+  /* Heatmap: dark cell → bright neon magenta */
+  --heat-0: oklch(0.22 0.04 300);
+  --heat-1: oklch(0.36 0.12 320);
+  --heat-2: oklch(0.50 0.20 325);
+  --heat-3: oklch(0.62 0.26 328);
+  --heat-4: oklch(0.74 0.32 332);
 }
 
 @layer base {
@@ -110,39 +108,40 @@
   }
   body {
     background-image:
-      radial-gradient(1200px 700px at 80% -10%, oklch(0.68 0.18 45 / 0.10), transparent 60%),
-      radial-gradient(900px 600px at -10% 110%, oklch(0.66 0.06 155 / 0.18), transparent 60%),
-      radial-gradient(700px 500px at 50% 40%, oklch(0.85 0.05 155 / 0.12), transparent 70%);
+      radial-gradient(1200px 700px at 80% -10%, oklch(0.72 0.30 330 / 0.18), transparent 60%),
+      radial-gradient(900px 600px at -10% 110%, oklch(0.62 0.25 295 / 0.22), transparent 60%),
+      radial-gradient(700px 500px at 50% 40%, oklch(0.40 0.15 310 / 0.18), transparent 70%);
     background-attachment: fixed;
   }
 }
 
 @layer components {
   .glass {
-    background: linear-gradient(180deg, oklch(1 0 0 / 0.55), oklch(1 0 0 / 0.30));
+    background: linear-gradient(180deg, oklch(1 0 0 / 0.04), oklch(1 0 0 / 0.015));
     backdrop-filter: blur(14px);
     border: 1px solid var(--color-border);
     box-shadow:
-      0 1px 0 oklch(1 0 0 / 0.6) inset,
-      0 10px 30px -18px oklch(0.30 0.04 175 / 0.25);
+      0 1px 0 oklch(1 0 0 / 0.05) inset,
+      0 10px 30px -18px oklch(0 0 0 / 0.7);
   }
   .glass-hover { transition: transform .25s ease, border-color .25s ease, background .25s ease, box-shadow .25s ease; }
   .glass-hover:hover {
-    border-color: oklch(0.68 0.18 45 / 0.35);
-    background: linear-gradient(180deg, oklch(0.68 0.18 45 / 0.06), oklch(1 0 0 / 0.45));
-    box-shadow: 0 14px 40px -18px oklch(0.68 0.18 45 / 0.30);
+    border-color: oklch(0.72 0.30 330 / 0.45);
+    background: linear-gradient(180deg, oklch(0.72 0.30 330 / 0.08), oklch(1 0 0 / 0.02));
+    box-shadow: 0 14px 40px -18px oklch(0.72 0.30 330 / 0.45);
   }
   .gold-glow, .neon-glow {
-    box-shadow: 0 0 0 1px oklch(0.68 0.18 45 / 0.45), 0 0 22px -4px oklch(0.68 0.18 45 / 0.45);
+    box-shadow: 0 0 0 1px oklch(0.72 0.30 330 / 0.55), 0 0 22px -4px oklch(0.72 0.30 330 / 0.55);
   }
   .text-gold { color: var(--gold); }
   .text-neon { color: var(--neon); }
-  .text-sage { color: var(--sage-deep); }
+  .text-sage { color: var(--foreground); }
   .bg-neon { background-color: var(--neon); }
   .bg-neon-soft { background-color: var(--neon-soft); }
-  .bg-sage { background-color: var(--sage); }
+  .bg-sage { background-color: var(--neon); }
   .border-neon { border-color: var(--neon); }
   .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
-  .scrollbar-thin::-webkit-scrollbar-thumb { background: oklch(0.30 0.04 175 / 0.20); border-radius: 999px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: oklch(1 0 0 / 0.10); border-radius: 999px; }
 }
+
 
