@@ -245,8 +245,74 @@ function DashboardPage() {
       <YearProgress />
 
       <HabitDialog open={!!editing} onOpenChange={(o) => !o && setEditing(undefined)} habit={editing} />
+
+      <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <RotateCcw className="h-4 w-4 text-destructive" />
+              Reset {format(cursor, "MMMM yyyy")}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This will clear every check-in for this month across all your habits. This action can't be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => resetMonth(cursor.getFullYear(), cursor.getMonth())}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Reset month
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Dialog
+        open={nameDialogOpen}
+        onOpenChange={(o) => { if (userName || !o) setNameDialogOpen(o); }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-gold" />
+              {userName ? "Update your name" : "Welcome to Habitus"}
+            </DialogTitle>
+            <DialogDescription>
+              {userName ? "Change how you're greeted on your dashboard." : "What should we call you? We'll greet you here every day."}
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => { e.preventDefault(); saveName(); }}
+            className="space-y-3"
+          >
+            <Input
+              autoFocus
+              maxLength={40}
+              placeholder="Your name"
+              value={nameDraft}
+              onChange={(e) => setNameDraft(e.target.value)}
+            />
+            <DialogFooter>
+              <Button type="submit" disabled={!nameDraft.trim()} className="bg-gold text-primary-foreground hover:bg-gold/90">
+                {userName ? "Save" : "Let's go"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
+}
+
+function greetingFor(d: Date): string {
+  const h = d.getHours();
+  if (h < 5) return "Late night";
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  if (h < 21) return "Good evening";
+  return "Good night";
 }
 
 function StatCard({ icon, label, value, suffix, progress }: { icon: React.ReactNode; label: string; value: string; suffix?: string; progress?: number }) {
