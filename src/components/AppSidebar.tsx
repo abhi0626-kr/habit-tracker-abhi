@@ -233,6 +233,29 @@ export function AppSidebar() {
       </div>
 
       <HabitDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+
+      <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Trash2 className="h-4 w-4 text-destructive" />
+              Delete all data?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes every habit, check-in, and setting on this device. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => { resetAll(); toast.success("Data reset", { description: "Your slate is clean." }); }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete everything
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </aside>
   );
 }
