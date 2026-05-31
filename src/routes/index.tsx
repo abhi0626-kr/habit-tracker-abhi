@@ -5,7 +5,7 @@ import {
   startOfMonth, endOfMonth, eachDayOfInterval, addMonths, format,
   isSameDay, isFuture, isToday, startOfYear,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil, RotateCcw, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil, RotateCcw, Sparkles, GripVertical } from "lucide-react";
 
 import { useHabits } from "@/store/habits";
 import { bestStreak, completionRate, currentStreak, dateKey, isCompleted, weekCompletions, weeklyTarget } from "@/lib/habit-utils";
@@ -38,11 +38,14 @@ function DashboardPage() {
   const habits = useHabits((s) => s.habits);
   const completions = useHabits((s) => s.completions);
   const toggle = useHabits((s) => s.toggleCompletion);
+  const reorderHabits = useHabits((s) => s.reorderHabits);
   const resetMonth = useHabits((s) => s.resetMonth);
 
   const [cursor, setCursor] = useState(new Date());
   const [editing, setEditing] = useState<Habit | undefined>();
   const [resetOpen, setResetOpen] = useState(false);
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
 
   const [userName, setUserName] = useState<string>("");
   const [nameDraft, setNameDraft] = useState("");
@@ -94,6 +97,31 @@ function DashboardPage() {
     if (!habits.length || isFuture(d)) return 0;
     const done = habits.filter((h) => isCompleted(completions, h.id, d)).length;
     return Math.round((done / habits.length) * 100);
+  };
+
+  const finishDrag = () => {
+    setDragId(null);
+    setOverId(null);
+  };
+
+  const reorderByDrop = (targetId: string) => {
+    if (!dragId || dragId === targetId) {
+      finishDrag();
+      return;
+    }
+
+    const ids = habits.map((h) => h.id);
+    const fromIndex = ids.indexOf(dragId);
+    const toIndex = ids.indexOf(targetId);
+
+    if (fromIndex < 0 || toIndex < 0) {
+      finishDrag();
+      return;
+    }
+
+    ids.splice(toIndex, 0, ids.splice(fromIndex, 1)[0]);
+    reorderHabits(ids);
+    finishDrag();
   };
 
   return (
@@ -169,10 +197,41 @@ function DashboardPage() {
               {habits.map((h) => {
                 const rate = completionRate(completions, h, startOfMonth(cursor),
                   monthDays[monthDays.length - 1] < new Date() ? endOfMonth(cursor) : new Date());
+                const dragging = dragId === h.id;
+                const over = overId === h.id && dragId && dragId !== h.id;
                 return (
-                  <tr key={h.id} className="border-t border-border/60 group">
-                    <td className="sticky left-0 z-10 bg-surface/80 backdrop-blur px-5 py-2">
+                  <tr
+                    key={h.id}
+                    draggable
+                    onDragStart={(e) => {
+                      setDragId(h.id);
+                      e.dataTransfer.effectAllowed = "move";
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = "move";
+                      if (overId !== h.id) setOverId(h.id);
+                    }}
+                    onDragLeave={() => {
+                      if (overId === h.id) setOverId(null);
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      reorderByDrop(h.id);
+                    }}
+                    onDragEnd={finishDrag}
+                    className={cn(
+                      "border-t border-border/60 group transition-colors cursor-grab active:cursor-grabbing",
+                      dragging && "opacity-50",
+                      over && "bg-gold/5"
+                    )}
+                  >
+                    <td className={cn(
+                      "sticky left-0 z-10 bg-surface/80 backdrop-blur px-5 py-2",
+                      over && "bg-surface/90"
+                    )}>
                       <div className="flex items-center gap-2.5">
+                        <GripVertical className="h-4 w-4 text-muted-foreground/40 shrink-0" />
                         <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: h.color, boxShadow: `0 0 8px ${h.color}66` }} />
                         <span className="text-base leading-none">{h.emoji}</span>
                         <div className="min-w-0">
