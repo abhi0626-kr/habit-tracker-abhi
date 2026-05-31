@@ -8,7 +8,7 @@ import {
 import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil, RotateCcw, Sparkles } from "lucide-react";
 
 import { useHabits } from "@/store/habits";
-import { bestStreak, completionRate, currentStreak, dateKey, isCompleted } from "@/lib/habit-utils";
+import { bestStreak, completionRate, currentStreak, dateKey, isCompleted, weekCompletions, weeklyTarget } from "@/lib/habit-utils";
 import { HabitDialog } from "@/components/HabitDialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -242,6 +242,8 @@ function DashboardPage() {
         </div>
       </section>
 
+      <WeeklyGoals />
+
       <YearProgress />
 
       <HabitDialog open={!!editing} onOpenChange={(o) => !o && setEditing(undefined)} habit={editing} />
@@ -340,6 +342,60 @@ function StatCard({ icon, label, value, suffix, progress }: { icon: React.ReactN
       )}
     </motion.div>
   );
+}
+
+function WeeklyGoals() {
+  const habits = useHabits((s) => s.habits);
+  const completions = useHabits((s) => s.completions);
+  const today = new Date();
+
+  if (!habits.length) return null;
+
+  return (
+    <div className="glass rounded-2xl p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="text-sm font-semibold">This week's goals</h3>
+          <p className="text-xs text-muted-foreground">Progress toward each habit's weekly target.</p>
+        </div>
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          Week of {format(startOfWeekMon(today), "MMM d")}
+        </span>
+      </div>
+      <ul className="grid gap-2.5 sm:grid-cols-2">
+        {habits.map((h) => {
+          const done = weekCompletions(completions, h.id, today);
+          const target = weeklyTarget(h);
+          const pct = Math.min(100, Math.round((done / target) * 100));
+          const hit = done >= target;
+          return (
+            <li key={h.id} className="rounded-xl bg-white/[0.03] border border-border px-3 py-2.5">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: h.color, boxShadow: `0 0 8px ${h.color}66` }} />
+                <span className="text-base leading-none">{h.emoji}</span>
+                <span className="truncate flex-1">{h.name}</span>
+                <span className={cn("text-xs font-mono", hit ? "text-gold" : "text-muted-foreground")}>{done}/{target}</span>
+              </div>
+              <div className="mt-2 h-1.5 rounded-full bg-white/5 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.7, ease: "easeOut" }}
+                  className={cn("h-full rounded-full", hit ? "bg-gradient-to-r from-gold/70 to-gold" : "bg-gold/60")}
+                />
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+function startOfWeekMon(d: Date) {
+  const day = (d.getDay() + 6) % 7;
+  const out = new Date(d);
+  out.setDate(d.getDate() - day);
+  out.setHours(0, 0, 0, 0);
+  return out;
 }
 
 function YearProgress() {

@@ -1,8 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, CalendarDays, Flame, BarChart3, Plus } from "lucide-react";
+import { LayoutDashboard, CalendarDays, Flame, BarChart3, Plus, Settings as SettingsIcon } from "lucide-react";
 import { useState } from "react";
 import logo from "@/assets/habits-logo.jpg";
 import { HabitDialog } from "./HabitDialog";
+import { SidebarControls } from "./SidebarControls";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 const items = [
@@ -15,6 +17,7 @@ const items = [
 export function MobileNav() {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const [open, setOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
     <>
@@ -23,12 +26,21 @@ export function MobileNav() {
           <img src={logo} alt="Habits" width={32} height={32} className="h-8 w-8 rounded-lg object-cover ring-1 ring-border" />
           <div className="text-sm font-semibold tracking-tight text-sage">Habits</div>
         </div>
-        <button
-          onClick={() => setOpen(true)}
-          className="h-8 px-3 rounded-lg bg-neon text-primary-foreground text-xs font-medium flex items-center gap-1"
-        >
-          <Plus className="h-3.5 w-3.5" /> New
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="h-8 w-8 grid place-items-center rounded-lg bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 transition"
+            aria-label="Settings"
+          >
+            <SettingsIcon className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => setOpen(true)}
+            className="h-8 px-3 rounded-lg bg-neon text-primary-foreground text-xs font-medium flex items-center gap-1"
+          >
+            <Plus className="h-3.5 w-3.5" /> New
+          </button>
+        </div>
       </header>
 
       {/* Bottom nav */}
@@ -55,6 +67,20 @@ export function MobileNav() {
       </nav>
 
       <HabitDialog open={open} onOpenChange={setOpen} />
+
+      <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <SheetContent side="right" className="w-[88vw] sm:max-w-sm overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2 text-sage">
+              <SettingsIcon className="h-4 w-4" /> Settings
+            </SheetTitle>
+            <SheetDescription>Backups, reminders, install, and data.</SheetDescription>
+          </SheetHeader>
+          <div className="mt-5">
+            <SidebarControls />
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

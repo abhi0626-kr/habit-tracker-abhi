@@ -52,6 +52,18 @@ export function weekDays(d: Date) {
   return Array.from({ length: 7 }, (_, i) => addDays(start, i));
 }
 
+/** Completions for a habit in the ISO week containing `d`. */
+export function weekCompletions(c: CompletionMap, habitId: string, d: Date): number {
+  return weekDays(d).reduce((n, day) => (isCompleted(c, habitId, day) ? n + 1 : n), 0);
+}
+
+/** Weekly target for a habit. Daily habits target 7/week. */
+export function weeklyTarget(habit: Habit): number {
+  const t = habit.frequency === "daily" ? 7 : habit.goalPerWeek;
+  return Math.min(7, Math.max(1, t));
+}
+
+
 export const HABIT_COLORS = [
   "#F5C24A", "#7DD3FC", "#86EFAC", "#F472B6",
   "#A78BFA", "#FB923C", "#34D399", "#60A5FA",
