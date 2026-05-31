@@ -6,9 +6,14 @@ import {
 } from "lucide-react";
 import logo from "@/assets/habits-logo.jpg";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { useHabits } from "@/store/habits";
 import { HabitDialog } from "./HabitDialog";
 import { InstallDialog } from "./InstallDialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -28,6 +33,7 @@ export function AppSidebar() {
   const importData = useHabits((s) => s.importData);
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const totalCheckins = Object.values(completions).reduce(
@@ -55,17 +61,26 @@ export function AppSidebar() {
         const data = JSON.parse(String(reader.result));
         if (!data.habits) throw new Error("Invalid file");
         importData(data);
+        toast.success("Backup restored", { description: "Your habits and check-ins are back." });
       } catch {
-        alert("Invalid backup file");
+        toast.error("Invalid backup file", { description: "We couldn't read that JSON file." });
       }
     };
     reader.readAsText(file);
   };
 
   const requestNotif = async () => {
-    if (!("Notification" in window)) return;
+    if (!("Notification" in window)) {
+      toast.error("Not supported", { description: "This browser doesn't support notifications." });
+      return;
+    }
     const perm = await Notification.requestPermission();
-    if (perm === "granted") updateSettings({ reminderEnabled: true });
+    if (perm === "granted") {
+      updateSettings({ reminderEnabled: true });
+      toast.success("Reminders enabled", { description: `We'll ping you at ${settings.reminderTime}.` });
+    } else {
+      toast.error("Notifications denied", { description: "Enable them in your browser settings." });
+    }
   };
 
   return (
@@ -177,11 +192,18 @@ export function AppSidebar() {
             />
             <button
               onClick={async () => {
-                if (!("Notification" in window)) return alert("Notifications not supported");
+                if (!("Notification" in window)) {
+                  toast.error("Not supported", { description: "This browser doesn't support notifications." });
+                  return;
+                }
                 let perm = Notification.permission;
                 if (perm === "default") perm = await Notification.requestPermission();
-                if (perm !== "granted") return alert("Notifications denied. Enable them in your browser settings.");
+                if (perm !== "granted") {
+                  toast.error("Notifications denied", { description: "Enable them in your browser settings." });
+                  return;
+                }
                 new Notification("Habitus", { body: "Reminders are working ✨", icon: "/icon-192.png" });
+                toast.success("Test sent", { description: "Check your system notifications." });
               }}
               className="text-[10px] px-2 py-1 rounded-md bg-gold/15 text-gold hover:bg-gold/25 transition"
               title="Send a test notification"
@@ -198,7 +220,7 @@ export function AppSidebar() {
         <InstallDialog />
 
         <button
-          onClick={() => { if (confirm("Delete ALL data? This cannot be undone.")) resetAll(); }}
+          onClick={() => setResetOpen(true)}
           className="w-full flex items-center justify-center gap-1.5 rounded-md text-destructive/80 hover:text-destructive hover:bg-destructive/10 text-xs py-1.5 transition"
         >
           <Trash2 className="h-3.5 w-3.5" /> Reset data
@@ -211,6 +233,29 @@ export function AppSidebar() {
       </div>
 
       <HabitDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+
+      <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Trash2 className="h-4 w-4 text-destructive" />
+              Delete all data?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes every habit, check-in, and setting on this device. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => { resetAll(); toast.success("Data reset", { description: "Your slate is clean." }); }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete everything
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </aside>
   );
 }

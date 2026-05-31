@@ -9,6 +9,7 @@ import { MobileNav } from "@/components/MobileNav";
 import { useHydrateStore } from "@/hooks/use-hydrate-store";
 import { useReminderScheduler } from "@/hooks/use-reminder-scheduler";
 import { useRegisterSW } from "@/hooks/use-register-sw";
+import { Toaster } from "@/components/ui/sonner";
 
 
 function NotFoundComponent() {
@@ -109,6 +110,7 @@ function AppShellInner() {
         <MobileNav />
         <Outlet />
       </main>
+      <Toaster position="top-center" theme="dark" richColors closeButton />
     </div>
   );
 }

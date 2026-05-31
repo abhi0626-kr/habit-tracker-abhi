@@ -33,7 +33,7 @@ function CalendarPage() {
   }, [cursor]);
 
   return (
-    <div className="p-6 md:p-8 space-y-6 max-w-[1200px]">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-[1200px]">
       <header className="flex items-end justify-between flex-wrap gap-4">
         <div>
           <p className="text-xs uppercase tracking-widest text-muted-foreground">Calendar</p>
