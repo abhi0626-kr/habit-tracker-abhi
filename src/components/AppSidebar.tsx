@@ -6,9 +6,14 @@ import {
 } from "lucide-react";
 import logo from "@/assets/habits-logo.jpg";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { useHabits } from "@/store/habits";
 import { HabitDialog } from "./HabitDialog";
 import { InstallDialog } from "./InstallDialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
 const navItems = [
