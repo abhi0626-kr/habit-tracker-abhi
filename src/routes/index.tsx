@@ -8,7 +8,7 @@ import {
 import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil, RotateCcw, Sparkles } from "lucide-react";
 
 import { useHabits } from "@/store/habits";
-import { bestStreak, completionRate, currentStreak, dateKey, isCompleted } from "@/lib/habit-utils";
+import { bestStreak, completionRate, currentStreak, dateKey, isCompleted, weekCompletions, weeklyTarget } from "@/lib/habit-utils";
 import { HabitDialog } from "@/components/HabitDialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
