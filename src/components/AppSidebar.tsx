@@ -33,6 +33,7 @@ export function AppSidebar() {
   const importData = useHabits((s) => s.importData);
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const totalCheckins = Object.values(completions).reduce(
