@@ -146,18 +146,18 @@ function AnalyticsPage() {
         <h3 className="text-sm font-semibold mb-4">Habit success rate · last 30 days</h3>
         <div className="space-y-3">
           {perHabit.map((h) => (
-            <div key={h.name} className="flex items-center gap-3">
-              <div className="w-40 truncate text-sm flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: h.color }} />
-                {h.emoji} {h.name}
+            <div key={h.name} className="flex items-center gap-2 sm:gap-3">
+              <div className="w-24 sm:w-40 shrink-0 truncate text-xs sm:text-sm flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: h.color }} />
+                <span className="truncate">{h.emoji} {h.name}</span>
               </div>
-              <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
+              <div className="flex-1 min-w-0 h-2 rounded-full bg-white/5 overflow-hidden">
                 <div className="h-full rounded-full transition-all"
                   style={{ width: `${h.rate}%`, background: `linear-gradient(90deg, ${h.color}80, ${h.color})`, boxShadow: `0 0 12px ${h.color}50` }} />
               </div>
-              <div className="w-20 text-right text-xs font-mono text-muted-foreground">
+              <div className="w-16 sm:w-20 text-right text-[10px] sm:text-xs font-mono text-muted-foreground shrink-0">
                 <span className="text-gold">{h.rate}%</span>
-                <span className="ml-2">🔥{h.current}</span>
+                <span className="ml-1 sm:ml-2">🔥{h.current}</span>
               </div>
             </div>
           ))}
