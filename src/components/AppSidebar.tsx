@@ -61,17 +61,26 @@ export function AppSidebar() {
         const data = JSON.parse(String(reader.result));
         if (!data.habits) throw new Error("Invalid file");
         importData(data);
+        toast.success("Backup restored", { description: "Your habits and check-ins are back." });
       } catch {
-        alert("Invalid backup file");
+        toast.error("Invalid backup file", { description: "We couldn't read that JSON file." });
       }
     };
     reader.readAsText(file);
   };
 
   const requestNotif = async () => {
-    if (!("Notification" in window)) return;
+    if (!("Notification" in window)) {
+      toast.error("Not supported", { description: "This browser doesn't support notifications." });
+      return;
+    }
     const perm = await Notification.requestPermission();
-    if (perm === "granted") updateSettings({ reminderEnabled: true });
+    if (perm === "granted") {
+      updateSettings({ reminderEnabled: true });
+      toast.success("Reminders enabled", { description: `We'll ping you at ${settings.reminderTime}.` });
+    } else {
+      toast.error("Notifications denied", { description: "Enable them in your browser settings." });
+    }
   };
 
   return (
