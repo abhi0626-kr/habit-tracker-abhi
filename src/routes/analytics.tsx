@@ -71,7 +71,7 @@ function AnalyticsPage() {
   const score = Math.round(perHabit.reduce((s, h) => s + h.rate, 0) / Math.max(1, perHabit.length));
 
   return (
-    <div className="p-6 md:p-8 space-y-6 max-w-[1400px]">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-[1400px]">
       <header>
         <p className="text-xs uppercase tracking-widest text-muted-foreground">Analytics</p>
         <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mt-1">Insights & trends</h1>

@@ -97,7 +97,7 @@ function DashboardPage() {
   };
 
   return (
-    <div className="p-6 md:p-8 space-y-6 max-w-[1400px]">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-[1400px]">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-widest text-muted-foreground">
