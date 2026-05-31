@@ -242,6 +242,8 @@ function DashboardPage() {
         </div>
       </section>
 
+      <WeeklyGoals />
+
       <YearProgress />
 
       <HabitDialog open={!!editing} onOpenChange={(o) => !o && setEditing(undefined)} habit={editing} />
