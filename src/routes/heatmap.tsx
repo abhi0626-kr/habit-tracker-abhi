@@ -4,7 +4,7 @@ import { eachDayOfInterval, format, getDay, startOfWeek, subDays, isFuture } fro
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle2 } from "lucide-react";
 import { useHabits } from "@/store/habits";
-import { dateKey, isCompleted } from "@/lib/habit-utils";
+import { dateKey, isCompleted, weekCompletions, weeklyTarget } from "@/lib/habit-utils";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/heatmap")({
