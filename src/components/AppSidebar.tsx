@@ -192,11 +192,18 @@ export function AppSidebar() {
             />
             <button
               onClick={async () => {
-                if (!("Notification" in window)) return alert("Notifications not supported");
+                if (!("Notification" in window)) {
+                  toast.error("Not supported", { description: "This browser doesn't support notifications." });
+                  return;
+                }
                 let perm = Notification.permission;
                 if (perm === "default") perm = await Notification.requestPermission();
-                if (perm !== "granted") return alert("Notifications denied. Enable them in your browser settings.");
+                if (perm !== "granted") {
+                  toast.error("Notifications denied", { description: "Enable them in your browser settings." });
+                  return;
+                }
                 new Notification("Habitus", { body: "Reminders are working ✨", icon: "/icon-192.png" });
+                toast.success("Test sent", { description: "Check your system notifications." });
               }}
               className="text-[10px] px-2 py-1 rounded-md bg-gold/15 text-gold hover:bg-gold/25 transition"
               title="Send a test notification"
@@ -213,7 +220,7 @@ export function AppSidebar() {
         <InstallDialog />
 
         <button
-          onClick={() => { if (confirm("Delete ALL data? This cannot be undone.")) resetAll(); }}
+          onClick={() => setResetOpen(true)}
           className="w-full flex items-center justify-center gap-1.5 rounded-md text-destructive/80 hover:text-destructive hover:bg-destructive/10 text-xs py-1.5 transition"
         >
           <Trash2 className="h-3.5 w-3.5" /> Reset data
