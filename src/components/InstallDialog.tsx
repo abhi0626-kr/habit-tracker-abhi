@@ -28,14 +28,29 @@ export function InstallDialog() {
     setDeferred(null);
   };
 
+  const handleClick = async () => {
+    if (deferred) {
+      try {
+        await deferred.prompt();
+        const choice = await deferred.userChoice;
+        setDeferred(null);
+        if (choice.outcome === "accepted") return;
+      } catch {
+        // fall through to instructions
+      }
+    }
+    setOpen(true);
+  };
+
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={handleClick}
         className="w-full flex items-center justify-center gap-1.5 rounded-md bg-neon/15 text-neon hover:bg-neon/25 text-xs py-1.5 transition"
       >
         <Download className="h-3.5 w-3.5" /> Install app
       </button>
+
 
       <AnimatePresence>
         {open && (
