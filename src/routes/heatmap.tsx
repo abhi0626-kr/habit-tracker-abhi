@@ -97,6 +97,39 @@ function HeatmapPage() {
         </select>
       </header>
 
+      {habits.length > 0 && (
+        <div className="glass rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold">This week's goals</h2>
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Mon–Sun</span>
+          </div>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {(filter === "all" ? habits : habits.filter((h) => h.id === filter)).map((h) => {
+              const done = weekCompletions(completions, h.id, new Date());
+              const target = weeklyTarget(h);
+              const pct = Math.min(100, Math.round((done / target) * 100));
+              const hit = done >= target;
+              return (
+                <li key={h.id} className="rounded-xl bg-foreground/[0.02] border border-border px-3 py-2.5">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: h.color, boxShadow: `0 0 8px ${h.color}66` }} />
+                    <span className="text-base leading-none">{h.emoji}</span>
+                    <span className="truncate flex-1">{h.name}</span>
+                    <span className={cn("text-xs font-mono", hit ? "text-neon" : "text-muted-foreground")}>{done}/{target}</span>
+                  </div>
+                  <div className="mt-2 h-1.5 rounded-full bg-white/5 overflow-hidden">
+                    <div
+                      className={cn("h-full rounded-full transition-all", hit ? "bg-neon" : "bg-neon/60")}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
       <div className="glass rounded-2xl p-5 overflow-x-auto scrollbar-thin">
         <div className="inline-block min-w-full">
           <div className="flex gap-[3px] text-[10px] text-muted-foreground ml-7 mb-1 relative h-3">
