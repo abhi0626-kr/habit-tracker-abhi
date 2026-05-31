@@ -110,6 +110,7 @@ function AppShellInner() {
         <MobileNav />
         <Outlet />
       </main>
+      <Toaster position="top-center" theme="dark" richColors closeButton />
     </div>
   );
 }
