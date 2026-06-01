@@ -20,7 +20,7 @@ export function AppSidebar() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
-    <aside className="hidden md:flex w-72 shrink-0 flex-col gap-4 border-r border-border bg-surface/40 backdrop-blur-xl p-4 h-screen sticky top-0">
+    <aside className="hidden md:flex w-72 shrink-0 flex-col gap-4 border-r border-border bg-surface/40 backdrop-blur-xl p-4 h-screen max-h-screen sticky top-0 overflow-y-auto scrollbar-thin">
       <div className="flex items-center gap-3 px-1 pt-1">
         <img
           src={logo}
