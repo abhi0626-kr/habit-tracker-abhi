@@ -8,6 +8,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import { AuthButton } from "./AuthButton";
 
 export function SidebarControls() {
   const habits = useHabits((s) => s.habits);
@@ -69,6 +70,8 @@ export function SidebarControls() {
 
   return (
     <div className="space-y-2">
+      <AuthButton />
+
       <div className="grid grid-cols-2 gap-2">
         <button onClick={exportJson} className="flex items-center justify-center gap-1.5 rounded-md bg-white/5 hover:bg-white/10 text-xs py-1.5 transition">
           <Download className="h-3.5 w-3.5" /> Export
