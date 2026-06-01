@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && node -e \"const fs=require('fs'); fs.rmSync('.vercel/output', {recursive:true, force:true}); fs.mkdirSync('.vercel/output/static', {recursive:true}); fs.cpSync('dist/client', '.vercel/output/static', {recursive:true}); fs.mkdirSync('.vercel/output/functions/__server.func', {recursive:true}); fs.cpSync('dist/server', '.vercel/output/functions/__server.func', {recursive:true}); fs.cpSync('dist/config.json', '.vercel/output/config.json');\"",
     "build:dev": "vite build --mode development",
     "vercel-build": "vite build && node -e \"const fs=require('fs'); fs.rmSync('.vercel/output', {recursive:true, force:true}); fs.mkdirSync('.vercel/output/static', {recursive:true}); fs.cpSync('dist/client', '.vercel/output/static', {recursive:true}); fs.mkdirSync('.vercel/output/functions/__server.func', {recursive:true}); fs.cpSync('dist/server', '.vercel/output/functions/__server.func', {recursive:true}); fs.cpSync('dist/config.json', '.vercel/output/config.json');\"",
     "preview": "vite preview",
