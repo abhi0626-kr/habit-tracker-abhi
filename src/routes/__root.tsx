@@ -9,6 +9,7 @@ import { MobileNav } from "@/components/MobileNav";
 import { useHydrateStore } from "@/hooks/use-hydrate-store";
 import { useReminderScheduler } from "@/hooks/use-reminder-scheduler";
 import { useRegisterSW } from "@/hooks/use-register-sw";
+import { useFirebaseSync } from "@/hooks/use-firebase-sync";
 import { Toaster } from "@/components/ui/sonner";
 
 
@@ -103,6 +104,7 @@ function AppShell() {
 function AppShellInner() {
   useReminderScheduler();
   useRegisterSW();
+  useFirebaseSync();
   return (
     <div className="flex min-h-screen w-full">
       <AppSidebar />
