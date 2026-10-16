@@ -269,14 +269,13 @@ function DashboardPage() {
                       return (
                         <td key={d.toISOString()} className="text-center px-0.5 py-2">
                           <button
-                            disabled={future}
                             onClick={() => toggle(h.id, d)}
                             className={cn(
                               "h-7 w-7 rounded-full grid place-items-center transition",
                               done
                                 ? "scale-100"
                                 : "bg-white/[0.04] hover:bg-white/[0.08] border border-border",
-                              future && "opacity-20 cursor-not-allowed",
+                              future && "opacity-50",
                               isToday(d) && !done && "ring-1 ring-gold/40"
                             )}
                             style={done ? {
