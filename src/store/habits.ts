@@ -1,12 +1,15 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { CompletionMap, Habit, Settings } from "@/types/habit";
-import { dateKey, HABIT_COLORS, HABIT_EMOJIS } from "@/lib/habit-utils";
+import { dateKey, HABIT_COLORS, HABIT_EMOJIS, monthKey } from "@/lib/habit-utils";
 import { subDays } from "date-fns";
+
+export type MonthSnapshotMap = Record<string, { habits: Habit[] }>;
 
 interface HabitState {
   habits: Habit[];
   completions: CompletionMap;
+  monthSnapshots: MonthSnapshotMap;
   settings: Settings;
   hydrated: boolean;
   setHydrated: (v: boolean) => void;
@@ -18,13 +21,13 @@ interface HabitState {
   resetAll: () => void;
   resetCompletions: () => void;
   resetMonth: (year: number, month: number) => void;
+  archiveMonth: (date?: Date) => void;
 
-  importData: (data: { habits: Habit[]; completions: CompletionMap; settings?: Settings }) => void;
+  importData: (data: { habits: Habit[]; completions: CompletionMap; settings?: Settings; monthSnapshots?: MonthSnapshotMap }) => void;
   updateSettings: (patch: Partial<Settings>) => void;
 }
 
 const uid = () => Math.random().toString(36).slice(2, 11);
-
 function seed(): Pick<HabitState, "habits" | "completions"> {
   const habits: Habit[] = [
     { id: uid(), name: "Morning Workout", emoji: "💪", color: HABIT_COLORS[0], frequency: "daily", goalPerWeek: 7, createdAt: new Date().toISOString(), description: "30 min strength or cardio", category: "Health" },
@@ -51,7 +54,8 @@ export const useHabits = create<HabitState>()(
   persist(
     (set, get) => ({
       ...seed(),
-      settings: { reminderEnabled: false, reminderTime: "20:00" },
+      monthSnapshots: {},
+      settings: { reminderEnabled: false, reminderTime: "20:00", activeMonthKey: monthKey(new Date()) },
       hydrated: false,
       setHydrated: (v) => set({ hydrated: v }),
       addHabit: (h) =>
@@ -71,8 +75,9 @@ export const useHabits = create<HabitState>()(
         set((s) => ({ habits: s.habits.map((h) => (h.id === id ? { ...h, ...patch } : h)) })),
       deleteHabit: (id) =>
         set((s) => {
-          const { [id]: _, ...rest } = s.completions;
-          return { habits: s.habits.filter((h) => h.id !== id), completions: rest };
+          return {
+            habits: s.habits.map((h) => (h.id === id ? { ...h, archived: true } : h)),
+          };
         }),
       toggleCompletion: (habitId, date) =>
         set((s) => {
@@ -84,8 +89,13 @@ export const useHabits = create<HabitState>()(
           return { completions: { ...s.completions, [habitId]: next } };
         }),
       reorderHabits: (ids) =>
-        set((s) => ({ habits: ids.map((id) => s.habits.find((h) => h.id === id)!).filter(Boolean) })),
-      resetAll: () => set({ habits: [], completions: {} }),
+        set((s) => {
+          const activeById = new Map(ids.map((id) => [id, s.habits.find((habit) => habit.id === id) || null]));
+          const reorderedActive = ids.map((id) => activeById.get(id)).filter(Boolean) as Habit[];
+          const archived = s.habits.filter((habit) => habit.archived);
+          return { habits: [...reorderedActive, ...archived] };
+        }),
+      resetAll: () => set({ habits: [], completions: {}, monthSnapshots: {} }),
       resetCompletions: () =>
         set((s) => ({ completions: Object.fromEntries(s.habits.map((h) => [h.id, {}])) })),
       resetMonth: (year, month) =>
@@ -97,12 +107,27 @@ export const useHabits = create<HabitState>()(
           }
           return { completions: next };
         }),
+      archiveMonth: (date = new Date()) =>
+        set((s) => {
+          const nextMonthKey = monthKey(date);
+          const closedMonthKey = s.settings.activeMonthKey ?? nextMonthKey;
+          const habits = s.habits.map((habit) => (habit.archived ? habit : { ...habit, archived: true }));
+          return {
+            monthSnapshots: {
+              ...s.monthSnapshots,
+              [closedMonthKey]: { habits: s.habits.map((habit) => ({ ...habit })) },
+            },
+            habits,
+            settings: { ...s.settings, activeMonthKey: nextMonthKey },
+          };
+        }),
 
       importData: (data) =>
         set({
           habits: data.habits ?? [],
           completions: data.completions ?? {},
-          settings: data.settings ?? get().settings,
+          monthSnapshots: data.monthSnapshots ?? {},
+          settings: { ...get().settings, ...(data.settings ?? {}) },
         }),
       updateSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
     }),

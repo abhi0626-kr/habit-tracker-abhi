@@ -3,6 +3,8 @@ import {
   Outlet, createRootRouteWithContext, useRouter,
   HeadContent, Scripts,
 } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
+import { monthKey } from "@/lib/habit-utils";
 import appCss from "../styles.css?url";
 import { AppSidebar } from "@/components/AppSidebar";
 import { MobileNav } from "@/components/MobileNav";
@@ -11,6 +13,7 @@ import { useReminderScheduler } from "@/hooks/use-reminder-scheduler";
 import { useRegisterSW } from "@/hooks/use-register-sw";
 import { useFirebaseSync } from "@/hooks/use-firebase-sync";
 import { Toaster } from "@/components/ui/sonner";
+import { useHabits } from "@/store/habits";
 
 
 function NotFoundComponent() {
@@ -105,6 +108,21 @@ function AppShellInner() {
   useReminderScheduler();
   useRegisterSW();
   useFirebaseSync();
+  const activeMonthKey = useHabits((s) => s.settings.activeMonthKey);
+  const archiveMonth = useHabits((s) => s.archiveMonth);
+  const processedMonthKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const currentMonthKey = monthKey(new Date());
+    if (processedMonthKeyRef.current === currentMonthKey) return;
+    if (activeMonthKey !== currentMonthKey) {
+      processedMonthKeyRef.current = currentMonthKey;
+      archiveMonth(new Date());
+      return;
+    }
+    processedMonthKeyRef.current = currentMonthKey;
+  }, [activeMonthKey, archiveMonth]);
+
   return (
     <div className="flex min-h-screen w-full">
       <AppSidebar />

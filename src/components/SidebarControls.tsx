@@ -12,7 +12,9 @@ import { AuthButton } from "./AuthButton";
 
 export function SidebarControls() {
   const habits = useHabits((s) => s.habits);
+  const activeHabits = habits.filter((habit) => !habit.archived);
   const completions = useHabits((s) => s.completions);
+  const monthSnapshots = useHabits((s) => s.monthSnapshots);
   const settings = useHabits((s) => s.settings);
   const updateSettings = useHabits((s) => s.updateSettings);
   const resetAll = useHabits((s) => s.resetAll);
@@ -28,7 +30,7 @@ export function SidebarControls() {
 
   const exportJson = () => {
     const blob = new Blob(
-      [JSON.stringify({ habits, completions, settings, exportedAt: new Date().toISOString() }, null, 2)],
+      [JSON.stringify({ habits, completions, monthSnapshots, settings, exportedAt: new Date().toISOString() }, null, 2)],
       { type: "application/json" }
     );
     const url = URL.createObjectURL(blob);
@@ -144,7 +146,7 @@ export function SidebarControls() {
       </button>
 
       <div className="flex items-center justify-between text-[10px] text-muted-foreground px-1">
-        <span>{habits.length} habits</span>
+        <span>{activeHabits.length} habits</span>
         <span>{totalCheckins} check-ins</span>
       </div>
 

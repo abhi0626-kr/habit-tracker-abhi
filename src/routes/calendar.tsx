@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek,
   addMonths, format, isSameMonth, isToday, isFuture,
@@ -7,7 +7,7 @@ import {
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useHabits } from "@/store/habits";
-import { isCompleted } from "@/lib/habit-utils";
+import { isCompleted, monthKey } from "@/lib/habit-utils";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/calendar")({
@@ -22,9 +22,29 @@ export const Route = createFileRoute("/calendar")({
 
 function CalendarPage() {
   const habits = useHabits((s) => s.habits);
+  const snapshots = useHabits((s) => s.monthSnapshots);
   const completions = useHabits((s) => s.completions);
   const [cursor, setCursor] = useState(new Date());
   const [hover, setHover] = useState<string | null>(null);
+
+  const visibleHabits = useMemo(() => {
+    const key = monthKey(cursor);
+    if (key === monthKey(new Date())) return habits.filter((habit) => !habit.archived);
+    return snapshots[key]?.habits ?? habits.filter((habit) => monthKey(habit.createdAt) <= key);
+  }, [habits, snapshots, cursor]);
+
+  useEffect(() => {
+    const key = monthKey(cursor);
+    if (key === monthKey(new Date()) || snapshots[key]) return;
+    useHabits.setState((state) => ({
+      monthSnapshots: {
+        ...state.monthSnapshots,
+        [key]: {
+          habits: state.habits.filter((habit) => monthKey(habit.createdAt) <= key).map((habit) => ({ ...habit })),
+        },
+      },
+    }));
+  }, [cursor, snapshots]);
 
   const days = useMemo(() => {
     const start = startOfWeek(startOfMonth(cursor), { weekStartsOn: 1 });
@@ -55,7 +75,7 @@ function CalendarPage() {
         <div className="grid grid-cols-7 gap-1.5">
           {days.map((d) => {
             const inMonth = isSameMonth(d, cursor);
-            const completed = habits.filter((h) => isCompleted(completions, h.id, d));
+            const completed = visibleHabits.filter((h) => isCompleted(completions, h.id, d));
             const future = isFuture(d);
             const key = d.toISOString();
             return (

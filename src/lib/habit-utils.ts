@@ -2,6 +2,11 @@ import { format, parseISO, differenceInCalendarDays, startOfWeek, addDays, subDa
 import type { CompletionMap, Habit } from "@/types/habit";
 
 export const dateKey = (d: Date) => format(d, "yyyy-MM-dd");
+export const monthKey = (d: Date | string) => format(typeof d === "string" ? parseISO(d) : d, "yyyy-MM");
+
+export function isCurrentMonth(month: Date, now = new Date()): boolean {
+  return monthKey(month) === monthKey(now);
+}
 
 export const isCompleted = (c: CompletionMap, habitId: string, d: Date) =>
   !!c[habitId]?.[dateKey(d)];

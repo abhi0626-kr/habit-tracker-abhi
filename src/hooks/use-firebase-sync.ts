@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, doc, getDocs, writeBatch } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, writeBatch } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { useAuth } from "@/store/auth";
 import { useHabits } from "@/store/habits";
-import type { Habit, CompletionMap } from "@/types/habit";
+import type { Habit, CompletionMap, Settings } from "@/types/habit";
+import type { MonthSnapshotMap } from "@/store/habits";
 
 export function useFirebaseSync() {
   const setUser = useAuth((s) => s.setUser);
@@ -28,10 +29,12 @@ export function useFirebaseSync() {
         setSync({ syncStatus: "loading", pendingCount: 0 });
         useHabits.getState().resetAll();
         try {
-          const [habitsSnap, compsSnap] = await Promise.all([
+          const [habitsSnap, compsSnap, snapshotsSnap] = await Promise.all([
             getDocs(collection(db, "users", user.uid, "habits")),
             getDocs(collection(db, "users", user.uid, "completions")),
+            getDocs(collection(db, "users", user.uid, "monthSnapshots")),
           ]);
+          const settingsSnap = await getDoc(doc(db, "users", user.uid, "settings", "preferences"));
           const habits: Habit[] = habitsSnap.docs
             .map((d) => d.data() as Habit & { order?: number })
             .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
@@ -39,7 +42,16 @@ export function useFirebaseSync() {
           compsSnap.forEach((d) => {
             completions[d.id] = (d.data() as any).days ?? {};
           });
-          useHabits.getState().importData({ habits, completions });
+          const monthSnapshots: MonthSnapshotMap = {};
+          snapshotsSnap.forEach((d) => {
+            monthSnapshots[d.id] = { habits: (d.data() as any).habits ?? [] };
+          });
+          useHabits.getState().importData({
+            habits,
+            completions,
+            monthSnapshots,
+            settings: settingsSnap.exists() ? (settingsSnap.data() as Settings) : undefined,
+          });
           setSync({ syncStatus: "synced", lastSyncedAt: Date.now() });
         } catch (e) {
           console.error("Cloud load failed", e);
@@ -78,20 +90,28 @@ export function useFirebaseSync() {
     let timer: ReturnType<typeof setTimeout> | null = null;
     let lastHabits = useHabits.getState().habits;
     let lastCompletions = useHabits.getState().completions;
+    let lastSnapshots = useHabits.getState().monthSnapshots;
+    let lastSettings = useHabits.getState().settings;
 
     const unsub = useHabits.subscribe((state) => {
       const uid = currentUidRef.current;
       if (!uid || syncingRef.current) {
         lastHabits = state.habits;
         lastCompletions = state.completions;
+        lastSnapshots = state.monthSnapshots;
+        lastSettings = state.settings;
         return;
       }
-      if (state.habits === lastHabits && state.completions === lastCompletions) return;
+      if (state.habits === lastHabits && state.completions === lastCompletions && state.monthSnapshots === lastSnapshots && state.settings === lastSettings) return;
 
       const prevHabits = lastHabits;
       const prevCompletions = lastCompletions;
+      const prevSnapshots = lastSnapshots;
+      const prevSettings = lastSettings;
       lastHabits = state.habits;
       lastCompletions = state.completions;
+      lastSnapshots = state.monthSnapshots;
+      lastSettings = state.settings;
 
       pendingRef.current += 1;
       setSync({ syncStatus: "pending", pendingCount: pendingRef.current });
@@ -102,6 +122,9 @@ export function useFirebaseSync() {
         setSync({ syncStatus: "syncing" });
         try {
           const batch = writeBatch(db);
+          if (state.settings !== prevSettings) {
+            batch.set(doc(db, "users", uid, "settings", "preferences"), state.settings);
+          }
           const prevIds = new Set(prevHabits.map((h) => h.id));
           const nextIds = new Set(state.habits.map((h) => h.id));
           state.habits.forEach((h, idx) => {
@@ -119,6 +142,14 @@ export function useFirebaseSync() {
             if (!(habitId in state.completions)) {
               batch.delete(doc(db, "users", uid, "completions", habitId));
             }
+          });
+          const prevSnapshotIds = new Set(Object.keys(prevSnapshots));
+          const nextSnapshotIds = new Set(Object.keys(state.monthSnapshots));
+          Object.entries(state.monthSnapshots).forEach(([month, snapshot]) => {
+            batch.set(doc(db, "users", uid, "monthSnapshots", month), { habits: snapshot.habits });
+          });
+          prevSnapshotIds.forEach((month) => {
+            if (!nextSnapshotIds.has(month)) batch.delete(doc(db, "users", uid, "monthSnapshots", month));
           });
           await batch.commit();
           pendingRef.current = Math.max(0, pendingRef.current - inFlight);

@@ -12,6 +12,7 @@ export function useReminderScheduler() {
   const time = useHabits((s) => s.settings.reminderTime);
   const habits = useHabits((s) => s.habits);
   const completions = useHabits((s) => s.completions);
+  const activeHabits = habits.filter((habit) => !habit.archived);
 
   useEffect(() => {
     if (!enabled) return;
@@ -28,7 +29,7 @@ export function useReminderScheduler() {
       localStorage.setItem(lastKey, today);
 
       const todayKey = dateKey(now);
-      const remaining = habits.filter((h) => !completions[h.id]?.[todayKey]).length;
+      const remaining = activeHabits.filter((h) => !completions[h.id]?.[todayKey]).length;
       const body = remaining
         ? `You have ${remaining} habit${remaining > 1 ? "s" : ""} left for today.`
         : "All habits done today. Keep the streak alive!";
@@ -44,5 +45,5 @@ export function useReminderScheduler() {
     tick();
     const id = window.setInterval(tick, 30_000);
     return () => window.clearInterval(id);
-  }, [enabled, time, habits, completions]);
+  }, [enabled, time, activeHabits, completions]);
 }

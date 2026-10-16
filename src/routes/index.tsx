@@ -8,7 +8,7 @@ import {
 import { ChevronLeft, ChevronRight, Flame, Trophy, Target, CheckCircle2, Pencil, RotateCcw, Sparkles, GripVertical } from "lucide-react";
 
 import { useHabits } from "@/store/habits";
-import { bestStreak, completionRate, currentStreak, dateKey, isCompleted, weekCompletions, weeklyTarget } from "@/lib/habit-utils";
+import { bestStreak, completionRate, currentStreak, dateKey, isCompleted, monthKey, weekCompletions, weeklyTarget } from "@/lib/habit-utils";
 import { HabitDialog } from "@/components/HabitDialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -35,8 +35,9 @@ export const Route = createFileRoute("/")({
 });
 
 function DashboardPage() {
-  const habits = useHabits((s) => s.habits);
+  const allHabits = useHabits((s) => s.habits);
   const completions = useHabits((s) => s.completions);
+  const monthSnapshots = useHabits((s) => s.monthSnapshots);
   const toggle = useHabits((s) => s.toggleCompletion);
   const reorderHabits = useHabits((s) => s.reorderHabits);
   const resetMonth = useHabits((s) => s.resetMonth);
@@ -50,6 +51,25 @@ function DashboardPage() {
   const [userName, setUserName] = useState<string>("");
   const [nameDraft, setNameDraft] = useState("");
   const [nameDialogOpen, setNameDialogOpen] = useState(false);
+
+  const habits = useMemo(() => {
+    const key = monthKey(cursor);
+    if (key === monthKey(new Date())) return allHabits.filter((habit) => !habit.archived);
+    return monthSnapshots[key]?.habits ?? allHabits.filter((habit) => monthKey(habit.createdAt) <= key);
+  }, [allHabits, monthSnapshots, cursor]);
+
+  useEffect(() => {
+    const key = monthKey(cursor);
+    if (key === monthKey(new Date()) || monthSnapshots[key]) return;
+    useHabits.setState((state) => ({
+      monthSnapshots: {
+        ...state.monthSnapshots,
+        [key]: {
+          habits: state.habits.filter((habit) => monthKey(habit.createdAt) <= key).map((habit) => ({ ...habit })),
+        },
+      },
+    }));
+  }, [cursor, monthSnapshots]);
 
   useEffect(() => {
     const stored = typeof window !== "undefined" ? localStorage.getItem(NAME_KEY) : null;
@@ -404,8 +424,9 @@ function StatCard({ icon, label, value, suffix, progress }: { icon: React.ReactN
 }
 
 function WeeklyGoals() {
-  const habits = useHabits((s) => s.habits);
+  const allHabits = useHabits((s) => s.habits);
   const completions = useHabits((s) => s.completions);
+  const habits = useMemo(() => allHabits.filter((habit) => !habit.archived), [allHabits]);
   const today = new Date();
 
   if (!habits.length) return null;
@@ -458,8 +479,9 @@ function startOfWeekMon(d: Date) {
 }
 
 function YearProgress() {
-  const habits = useHabits((s) => s.habits);
+  const allHabits = useHabits((s) => s.habits);
   const completions = useHabits((s) => s.completions);
+  const habits = useMemo(() => allHabits.filter((habit) => !habit.archived), [allHabits]);
   const yearDone = useMemo(() => {
     const start = startOfYear(new Date());
     const today = new Date();

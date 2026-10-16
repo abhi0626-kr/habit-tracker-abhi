@@ -22,4 +22,5 @@ export interface Settings {
   reminderEnabled: boolean;
   reminderTime: string; // HH:MM
   lastBackup?: string;
+  activeMonthKey?: string;
 }
