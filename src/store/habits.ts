@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { CompletionMap, Habit, Settings } from "@/types/habit";
 import { dateKey, HABIT_COLORS, HABIT_EMOJIS, monthKey } from "@/lib/habit-utils";
-import { subDays } from "date-fns";
+import { isToday, subDays } from "date-fns";
 
 export type MonthSnapshotMap = Record<string, { habits: Habit[] }>;
 
@@ -81,6 +81,7 @@ export const useHabits = create<HabitState>()(
         }),
       toggleCompletion: (habitId, date) =>
         set((s) => {
+          if (!isToday(date)) return s;
           const k = dateKey(date);
           const prev = s.completions[habitId] ?? {};
           const next = { ...prev };

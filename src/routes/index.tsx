@@ -193,7 +193,7 @@ function DashboardPage() {
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <div>
             <h2 className="text-sm font-semibold">Habit tracker</h2>
-            <p className="text-xs text-muted-foreground">Tap circles to mark complete</p>
+            <p className="text-xs text-muted-foreground">Tap today's circle to mark complete</p>
           </div>
           <div className="text-xs text-muted-foreground">{habits.length} habits · {monthDays.length} days</div>
         </div>
@@ -267,23 +267,43 @@ function DashboardPage() {
                     </td>
                     {monthDays.map((d) => {
                       const done = isCompleted(completions, h.id, d);
-                      const future = isFuture(d) && !isSameDay(d, new Date());
+                      const currentDay = isToday(d);
+                      const isFutureDay = isFuture(d) && !currentDay;
+                      const disabled = !currentDay;
                       return (
                         <td key={d.toISOString()} className="text-center px-0.5 py-2">
                           <button
-                            onClick={() => toggle(h.id, d)}
+                            type="button"
+                            disabled={disabled}
+                            onClick={() => {
+                              if (currentDay) toggle(h.id, d);
+                            }}
                             className={cn(
                               "h-7 w-7 rounded-full grid place-items-center transition",
                               done
                                 ? "scale-100"
-                                : "bg-white/[0.04] hover:bg-white/[0.08] border border-border",
-                              future && "opacity-50",
-                              isToday(d) && !done && "ring-1 ring-gold/40"
+                                : "bg-white/[0.04] border border-border",
+                              currentDay && !done && "hover:bg-white/[0.08] cursor-pointer ring-1 ring-gold/40 hover:ring-gold",
+                              currentDay && done && "cursor-pointer hover:brightness-110",
+                              disabled && "cursor-not-allowed",
+                              disabled && !done && "opacity-35",
+                              disabled && done && "opacity-75"
                             )}
                             style={done ? {
                               backgroundColor: h.color,
-                              boxShadow: `0 0 12px ${h.color}80`,
+                              boxShadow: currentDay ? `0 0 12px ${h.color}80` : `0 0 4px ${h.color}40`,
                             } : undefined}
+                            title={
+                              currentDay
+                                ? done
+                                  ? "Today: Tap to uncheck"
+                                  : "Today: Tap to mark complete"
+                                : isFutureDay
+                                  ? `Upcoming (${format(d, "MMM d")}) — locked`
+                                  : done
+                                    ? `Completed on ${format(d, "MMM d")} (locked)`
+                                    : `Past (${format(d, "MMM d")}) — locked`
+                            }
                           >
                             {done && <CheckCircle2 className="h-3.5 w-3.5 text-black/70" />}
                           </button>
