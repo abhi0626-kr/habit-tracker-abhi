@@ -23,4 +23,5 @@ export interface Settings {
   reminderTime: string; // HH:MM
   lastBackup?: string;
   activeMonthKey?: string;
+  theme?: "light" | "dark";
 }

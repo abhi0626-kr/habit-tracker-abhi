@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { Habit } from "@/types/habit";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const NAME_KEY = "habitus.userName";
 
@@ -163,9 +164,10 @@ function DashboardPage() {
           </h1>
         </div>
         <div className="flex items-center gap-2">
+          <ThemeToggle variant="button" />
           <button
             onClick={() => setResetOpen(true)}
-            className="glass rounded-xl px-3 py-2 text-xs font-medium flex items-center gap-1.5 hover:border-destructive/40 hover:text-destructive transition"
+            className="glass rounded-xl px-3 py-2 text-xs font-medium flex items-center gap-1.5 hover:border-destructive/40 hover:text-destructive transition cursor-pointer"
             title="Reset this month's check-ins"
           >
             <RotateCcw className="h-3.5 w-3.5" /> Reset month

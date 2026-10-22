@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { useHabits } from "@/store/habits";
 import { isCompleted, monthKey } from "@/lib/habit-utils";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/calendar")({
   head: () => ({
@@ -59,10 +60,13 @@ function CalendarPage() {
           <p className="text-xs uppercase tracking-widest text-muted-foreground">Calendar</p>
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mt-1">{format(cursor, "MMMM yyyy")}</h1>
         </div>
-        <div className="flex items-center gap-1 glass rounded-xl p-1">
-          <button onClick={() => setCursor((d) => addMonths(d, -1))} className="p-2 rounded-lg hover:bg-white/5"><ChevronLeft className="h-4 w-4" /></button>
-          <button onClick={() => setCursor(new Date())} className="px-3 py-1.5 text-xs font-medium rounded-lg hover:bg-white/5">Today</button>
-          <button onClick={() => setCursor((d) => addMonths(d, 1))} className="p-2 rounded-lg hover:bg-white/5"><ChevronRight className="h-4 w-4" /></button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle variant="button" />
+          <div className="flex items-center gap-1 glass rounded-xl p-1">
+            <button onClick={() => setCursor((d) => addMonths(d, -1))} className="p-2 rounded-lg hover:bg-white/5"><ChevronLeft className="h-4 w-4" /></button>
+            <button onClick={() => setCursor(new Date())} className="px-3 py-1.5 text-xs font-medium rounded-lg hover:bg-white/5">Today</button>
+            <button onClick={() => setCursor((d) => addMonths(d, 1))} className="p-2 rounded-lg hover:bg-white/5"><ChevronRight className="h-4 w-4" /></button>
+          </div>
         </div>
       </header>
 

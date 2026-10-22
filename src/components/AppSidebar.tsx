@@ -5,6 +5,7 @@ import logo from "@/assets/habits-logo.jpg";
 import { useState } from "react";
 import { HabitDialog } from "./HabitDialog";
 import { SidebarControls } from "./SidebarControls";
+import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -21,18 +22,21 @@ export function AppSidebar() {
 
   return (
     <aside className="hidden md:flex w-72 shrink-0 flex-col gap-4 border-r border-border bg-surface/40 backdrop-blur-xl p-4 h-screen max-h-screen sticky top-0 overflow-y-auto scrollbar-thin">
-      <div className="flex items-center gap-3 px-1 pt-1">
-        <img
-          src={logo}
-          alt="Habits logo"
-          width={44}
-          height={44}
-          className="h-11 w-11 rounded-2xl object-cover ring-1 ring-border shadow-sm"
-        />
-        <div>
-          <div className="text-base font-semibold tracking-tight text-sage">Habits</div>
-          <div className="text-[11px] text-muted-foreground">A calmer journey</div>
+      <div className="flex items-center justify-between px-1 pt-1">
+        <div className="flex items-center gap-3">
+          <img
+            src={logo}
+            alt="Habits logo"
+            width={44}
+            height={44}
+            className="h-11 w-11 rounded-2xl object-cover ring-1 ring-border shadow-sm"
+          />
+          <div>
+            <div className="text-base font-semibold tracking-tight text-sage">Habits</div>
+            <div className="text-[11px] text-muted-foreground">A calmer journey</div>
+          </div>
         </div>
+        <ThemeToggle variant="icon" />
       </div>
 
       <nav className="flex flex-col gap-1">
@@ -63,7 +67,7 @@ export function AppSidebar() {
       <div className="mt-2">
         <button
           onClick={() => setDialogOpen(true)}
-          className="w-full flex items-center justify-center gap-2 rounded-lg bg-gold text-primary-foreground text-sm font-medium py-2 hover:brightness-110 transition"
+          className="w-full flex items-center justify-center gap-2 rounded-lg bg-gold text-primary-foreground text-sm font-medium py-2 hover:brightness-110 transition cursor-pointer"
         >
           <Plus className="h-4 w-4" /> New Habit
         </button>

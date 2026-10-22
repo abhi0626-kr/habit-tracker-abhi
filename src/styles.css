@@ -2,7 +2,7 @@
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -31,8 +31,6 @@
   --color-ring: var(--ring);
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
-  --color-surface: var(--surface);
-  --color-surface-elevated: var(--surface-elevated);
   --color-gold: var(--gold);
   --color-gold-soft: var(--gold-soft);
   --color-neon: var(--neon);
@@ -47,9 +45,59 @@
   --color-heat-3: var(--heat-3);
   --color-heat-4: var(--heat-4);
 }
+
 :root {
   --radius: 0.875rem;
 
+  /* Light mode theme - crisp, soft lavender-neutral surface with vibrant magenta accents */
+  --background: oklch(0.985 0.006 300);
+  --foreground: oklch(0.16 0.03 300);
+
+  --surface: oklch(0.96 0.012 300);
+  --surface-elevated: oklch(1 0 0);
+
+  --card: oklch(1 0 0 / 0.88);
+  --card-foreground: oklch(0.16 0.03 300);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0.03 300);
+
+  --primary: oklch(0.58 0.28 330);
+  --primary-foreground: oklch(0.99 0 0);
+
+  /* Neon magenta tokens */
+  --gold: oklch(0.58 0.28 330);
+  --gold-soft: oklch(0.58 0.28 330 / 0.12);
+  --neon: oklch(0.58 0.28 330);
+  --neon-soft: oklch(0.58 0.28 330 / 0.12);
+  --neon-pink: oklch(0.62 0.28 350);
+  --neon-violet: oklch(0.52 0.24 295);
+
+  --sage: oklch(0.56 0.28 330);
+  --sage-deep: oklch(0.16 0.03 300);
+  --forest: oklch(0.92 0.02 300);
+
+  --secondary: oklch(0.93 0.012 300);
+  --secondary-foreground: oklch(0.18 0.03 300);
+  --muted: oklch(0.94 0.010 300);
+  --muted-foreground: oklch(0.48 0.03 300);
+  --accent: oklch(0.92 0.035 320);
+  --accent-foreground: oklch(0.18 0.03 300);
+  --destructive: oklch(0.58 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  --border: oklch(0.20 0.03 300 / 0.12);
+  --input: oklch(0.20 0.03 300 / 0.08);
+  --ring: oklch(0.58 0.28 330 / 0.4);
+
+  /* Heatmap: subtle cell → rich vivid magenta */
+  --heat-0: oklch(0.92 0.012 300);
+  --heat-1: oklch(0.85 0.09 325);
+  --heat-2: oklch(0.74 0.17 328);
+  --heat-3: oklch(0.64 0.24 330);
+  --heat-4: oklch(0.56 0.28 332);
+}
+
+.dark {
   /* Deep purple-black + neon magenta theme (from reference screenshot) */
   --background: oklch(0.14 0.04 300);
   --foreground: oklch(0.97 0.01 320);
@@ -108,15 +156,30 @@
   }
   body {
     background-image:
+      radial-gradient(1200px 700px at 80% -10%, oklch(0.88 0.08 330 / 0.22), transparent 60%),
+      radial-gradient(900px 600px at -10% 110%, oklch(0.86 0.08 295 / 0.22), transparent 60%),
+      radial-gradient(700px 500px at 50% 40%, oklch(0.92 0.05 310 / 0.25), transparent 70%);
+    background-attachment: fixed;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+  .dark body {
+    background-image:
       radial-gradient(1200px 700px at 80% -10%, oklch(0.72 0.30 330 / 0.18), transparent 60%),
       radial-gradient(900px 600px at -10% 110%, oklch(0.62 0.25 295 / 0.22), transparent 60%),
       radial-gradient(700px 500px at 50% 40%, oklch(0.40 0.15 310 / 0.18), transparent 70%);
-    background-attachment: fixed;
   }
 }
 
 @layer components {
   .glass {
+    background: linear-gradient(180deg, oklch(1 0 0 / 0.88), oklch(1 0 0 / 0.72));
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--color-border);
+    box-shadow:
+      0 1px 0 oklch(1 0 0 / 0.8) inset,
+      0 10px 25px -18px oklch(0.2 0.03 300 / 0.12);
+  }
+  .dark .glass {
     background: linear-gradient(180deg, oklch(1 0 0 / 0.04), oklch(1 0 0 / 0.015));
     backdrop-filter: blur(14px);
     border: 1px solid var(--color-border);
@@ -126,24 +189,58 @@
   }
   .glass-hover { transition: transform .25s ease, border-color .25s ease, background .25s ease, box-shadow .25s ease; }
   .glass-hover:hover {
+    border-color: oklch(0.58 0.28 330 / 0.45);
+    background: linear-gradient(180deg, oklch(0.58 0.28 330 / 0.08), oklch(1 0 0 / 0.85));
+    box-shadow: 0 14px 40px -18px oklch(0.58 0.28 330 / 0.2);
+  }
+  .dark .glass-hover:hover {
     border-color: oklch(0.72 0.30 330 / 0.45);
     background: linear-gradient(180deg, oklch(0.72 0.30 330 / 0.08), oklch(1 0 0 / 0.02));
     box-shadow: 0 14px 40px -18px oklch(0.72 0.30 330 / 0.45);
   }
   .gold-glow, .neon-glow {
+    box-shadow: 0 0 0 1px oklch(0.58 0.28 330 / 0.4), 0 0 18px -4px oklch(0.58 0.28 330 / 0.35);
+  }
+  .dark .gold-glow, .dark .neon-glow {
     box-shadow: 0 0 0 1px oklch(0.72 0.30 330 / 0.55), 0 0 22px -4px oklch(0.72 0.30 330 / 0.55);
   }
   .text-gold { color: var(--gold); }
   .text-neon { color: var(--neon); }
-  .text-sage { color: var(--foreground); }
+  .text-sage { color: var(--sage); }
+  .dark .text-sage { color: var(--foreground); }
   .bg-neon { background-color: var(--neon); }
   .bg-neon-soft { background-color: var(--neon-soft); }
   .bg-sage { background-color: var(--neon); }
   .border-neon { border-color: var(--neon); }
   .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-  .scrollbar-thin::-webkit-scrollbar-thumb { background: oklch(1 0 0 / 0.15); border-radius: 999px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: oklch(0 0 0 / 0.15); border-radius: 999px; }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb { background: oklch(1 0 0 / 0.15); }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: var(--neon); }
+
+  /* Smooth light-mode adaptions for white opacity utilities */
+  :root:not(.dark) .bg-white\/5 {
+    background-color: oklch(0 0 0 / 0.04);
+  }
+  :root:not(.dark) .hover\:bg-white\/5:hover {
+    background-color: oklch(0 0 0 / 0.05);
+  }
+  :root:not(.dark) .hover\:bg-white\/10:hover {
+    background-color: oklch(0 0 0 / 0.08);
+  }
+  :root:not(.dark) .bg-white\/15 {
+    background-color: oklch(0 0 0 / 0.12);
+  }
+  :root:not(.dark) .bg-white\/\[0\.02\] {
+    background-color: oklch(0 0 0 / 0.02);
+  }
+  :root:not(.dark) .bg-white\/\[0\.03\] {
+    background-color: oklch(0 0 0 / 0.03);
+  }
+  :root:not(.dark) .bg-white\/\[0\.04\] {
+    background-color: oklch(0 0 0 / 0.04);
+  }
+  :root:not(.dark) .hover\:bg-white\/\[0\.08\]:hover {
+    background-color: oklch(0 0 0 / 0.07);
+  }
 }
-
-

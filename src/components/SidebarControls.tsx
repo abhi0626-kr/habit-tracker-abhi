@@ -3,6 +3,7 @@ import { Download, Upload, Bell, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useHabits } from "@/store/habits";
 import { InstallDialog } from "./InstallDialog";
+import { ThemeToggle } from "./ThemeToggle";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -84,6 +85,8 @@ export function SidebarControls() {
         <input ref={fileRef} type="file" accept="application/json" className="hidden"
           onChange={(e) => e.target.files?.[0] && importJson(e.target.files[0])} />
       </div>
+
+      <ThemeToggle variant="switch" />
 
       <div className="rounded-lg bg-white/5 p-2.5 space-y-2">
         <div className="flex items-center justify-between">

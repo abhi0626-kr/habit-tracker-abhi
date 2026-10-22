@@ -10,6 +10,7 @@ import {
 import { Award, Flame, TrendingUp, Star } from "lucide-react";
 import { useHabits } from "@/store/habits";
 import { bestStreak, completionRate, currentStreak, isCompleted } from "@/lib/habit-utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/analytics")({
   head: () => ({
@@ -72,9 +73,12 @@ function AnalyticsPage() {
 
   return (
     <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-[1400px]">
-      <header>
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Analytics</p>
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mt-1">Insights & trends</h1>
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Analytics</p>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mt-1">Insights & trends</h1>
+        </div>
+        <ThemeToggle variant="button" />
       </header>
 
       <div className="grid lg:grid-cols-3 gap-4">
@@ -86,7 +90,7 @@ function AnalyticsPage() {
             <ResponsiveContainer>
               <RadialBarChart innerRadius="78%" outerRadius="100%" data={[{ value: score, fill: "var(--gold)" }]} startAngle={90} endAngle={-270}>
                 <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-                <RadialBar background={{ fill: "rgba(255,255,255,0.05)" }} dataKey="value" cornerRadius={20} />
+                <RadialBar background={{ fill: "var(--muted)" }} dataKey="value" cornerRadius={20} />
               </RadialBarChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 grid place-items-center">
@@ -112,9 +116,9 @@ function AnalyticsPage() {
                     <stop offset="100%" stopColor="var(--gold)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="week" stroke="rgba(255,255,255,0.3)" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ background: "rgba(0,0,0,0.85)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 12 }} />
+                <XAxis dataKey="week" stroke="var(--muted-foreground)" opacity={0.6} fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--muted-foreground)" opacity={0.6} fontSize={11} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={{ background: "var(--popover)", color: "var(--popover-foreground)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12, boxShadow: "0 10px 25px -5px rgba(0,0,0,0.2)" }} />
                 <Area type="monotone" dataKey="count" stroke="var(--gold)" strokeWidth={2} fill="url(#g)" />
               </AreaChart>
             </ResponsiveContainer>
@@ -128,9 +132,9 @@ function AnalyticsPage() {
           <div className="h-56">
             <ResponsiveContainer>
               <BarChart data={monthly} margin={{ left: -20, right: 8, top: 8, bottom: 0 }}>
-                <XAxis dataKey="month" stroke="rgba(255,255,255,0.3)" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ background: "rgba(0,0,0,0.85)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 12 }} />
+                <XAxis dataKey="month" stroke="var(--muted-foreground)" opacity={0.6} fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--muted-foreground)" opacity={0.6} fontSize={11} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={{ background: "var(--popover)", color: "var(--popover-foreground)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12, boxShadow: "0 10px 25px -5px rgba(0,0,0,0.2)" }} />
                 <Bar dataKey="pct" fill="var(--gold)" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

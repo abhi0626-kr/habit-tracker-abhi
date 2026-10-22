@@ -12,6 +12,7 @@ import { useHydrateStore } from "@/hooks/use-hydrate-store";
 import { useReminderScheduler } from "@/hooks/use-reminder-scheduler";
 import { useRegisterSW } from "@/hooks/use-register-sw";
 import { useFirebaseSync } from "@/hooks/use-firebase-sync";
+import { useTheme } from "@/hooks/use-theme";
 import { Toaster } from "@/components/ui/sonner";
 import { useHabits } from "@/store/habits";
 
@@ -78,8 +79,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <head><HeadContent /></head>
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var raw = localStorage.getItem('habit-tracker-v1');
+                  if (raw) {
+                    var parsed = JSON.parse(raw);
+                    if (parsed && parsed.state && parsed.state.settings && parsed.state.settings.theme === 'light') {
+                      document.documentElement.classList.remove('dark');
+                      document.documentElement.classList.add('light');
+                    }
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+        <HeadContent />
+      </head>
       <body>
         {children}
         <Scripts />
@@ -108,6 +129,7 @@ function AppShellInner() {
   useReminderScheduler();
   useRegisterSW();
   useFirebaseSync();
+  const { theme } = useTheme();
   const activeMonthKey = useHabits((s) => s.settings.activeMonthKey);
   const archiveMonth = useHabits((s) => s.archiveMonth);
   const processedMonthKeyRef = useRef<string | null>(null);
@@ -130,8 +152,7 @@ function AppShellInner() {
         <MobileNav />
         <Outlet />
       </main>
-      <Toaster position="top-center" theme="dark" richColors closeButton />
+      <Toaster position="top-center" theme={theme === "light" ? "light" : "dark"} richColors closeButton />
     </div>
   );
 }
-

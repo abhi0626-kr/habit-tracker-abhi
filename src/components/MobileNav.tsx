@@ -4,6 +4,7 @@ import { useState } from "react";
 import logo from "@/assets/habits-logo.jpg";
 import { HabitDialog } from "./HabitDialog";
 import { SidebarControls } from "./SidebarControls";
+import { ThemeToggle } from "./ThemeToggle";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
@@ -27,16 +28,17 @@ export function MobileNav() {
           <div className="text-sm font-semibold tracking-tight text-sage">Habits</div>
         </div>
         <div className="flex items-center gap-2">
+          <ThemeToggle variant="icon" />
           <button
             onClick={() => setSettingsOpen(true)}
-            className="h-8 w-8 grid place-items-center rounded-lg bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 transition"
+            className="h-8 w-8 grid place-items-center rounded-lg bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 transition cursor-pointer"
             aria-label="Settings"
           >
             <SettingsIcon className="h-4 w-4" />
           </button>
           <button
             onClick={() => setOpen(true)}
-            className="h-8 px-3 rounded-lg bg-neon text-primary-foreground text-xs font-medium flex items-center gap-1"
+            className="h-8 px-3 rounded-lg bg-neon text-primary-foreground text-xs font-medium flex items-center gap-1 cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" /> New
           </button>

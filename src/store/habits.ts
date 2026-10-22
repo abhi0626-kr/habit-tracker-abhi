@@ -55,7 +55,7 @@ export const useHabits = create<HabitState>()(
     (set, get) => ({
       ...seed(),
       monthSnapshots: {},
-      settings: { reminderEnabled: false, reminderTime: "20:00", activeMonthKey: monthKey(new Date()) },
+      settings: { reminderEnabled: false, reminderTime: "20:00", activeMonthKey: monthKey(new Date()), theme: "dark" },
       hydrated: false,
       setHydrated: (v) => set({ hydrated: v }),
       addHabit: (h) =>

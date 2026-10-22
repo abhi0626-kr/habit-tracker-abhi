@@ -6,6 +6,7 @@ import { X, CheckCircle2 } from "lucide-react";
 import { useHabits } from "@/store/habits";
 import { dateKey, isCompleted, weekCompletions, weeklyTarget } from "@/lib/habit-utils";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/heatmap")({
   head: () => ({
@@ -87,14 +88,17 @@ function HeatmapPage() {
             {total} contributions in the last year
           </h1>
         </div>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="glass rounded-lg px-3 py-2 pr-8 text-sm outline-none border-border bg-background text-foreground [&>option]:bg-background [&>option]:text-foreground"
-        >
-          <option value="all">All habits</option>
-          {habits.map((h) => <option key={h.id} value={h.id}>{h.emoji} {h.name}</option>)}
-        </select>
+        <div className="flex items-center gap-2">
+          <ThemeToggle variant="button" />
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="glass rounded-lg px-3 py-2 pr-8 text-sm outline-none border-border bg-background text-foreground [&>option]:bg-background [&>option]:text-foreground cursor-pointer"
+          >
+            <option value="all">All habits</option>
+            {habits.map((h) => <option key={h.id} value={h.id}>{h.emoji} {h.name}</option>)}
+          </select>
+        </div>
       </header>
 
       {habits.length > 0 && (
